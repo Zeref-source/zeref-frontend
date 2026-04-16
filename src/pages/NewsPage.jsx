@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 
-const API_BASE = 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:8000' : '')
 
 const SOURCE_MAP = {
   Gaming: ['IGN', 'GameSpot', 'Eurogamer', 'Polygon', 'PC Gamer',
@@ -109,6 +109,11 @@ export default function NewsPage({ category = 'Gaming' }) {
   const [refreshing, setRefreshing] = useState(false)
 
   const fetchNews = async (force = false) => {
+    if (!API_BASE) {
+      setError('Backend server not connected yet. News will be available once the backend is deployed. 🚀')
+      setLoading(false)
+      return
+    }
     if (force) setRefreshing(true)
     else setLoading(true)
     setError('')
@@ -123,7 +128,7 @@ export default function NewsPage({ category = 'Gaming' }) {
       setArticles(categoryArticles)
       setLastUpdated(new Date())
     } catch (e) {
-      setError('Could not load news. Make sure the backend is running.')
+      setError('Could not load news. Backend server is not reachable right now.')
     } finally {
       setLoading(false)
       setRefreshing(false)
