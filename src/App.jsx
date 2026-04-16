@@ -33,7 +33,7 @@ export default function App() {
             <polygon points="10,46 38,46 10,54 54,54 54,46" fill="url(#hzGrad)" opacity="0.95"/>
             <rect x="10" y="10" width="9" height="8" fill="#00ffee" opacity="0.45" rx="1"/>
           </svg>
-          Zeref.co.life
+          Machchli's Newspaper
         </span>
 
         <nav className="header-nav">
