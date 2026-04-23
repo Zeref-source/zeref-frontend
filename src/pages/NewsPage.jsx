@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react'
 
-const API_BASE = 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
 
 const SOURCE_MAP = {
   Gaming: ['IGN', 'GameSpot', 'Eurogamer', 'Polygon', 'PC Gamer',
            'Rock Paper Shotgun', 'VGC', 'GamesIndustry.biz', 'Ars Technica', 'Game Developer'],
   Hardware: ["Tom's Hardware", 'The Verge', 'Wccftech', 'Digital Trends', 'AnandTech'],
+  Geopolitics: ['BBC World', 'Al Jazeera', 'France 24', 'DW World', 'Foreign Policy', 'The Guardian', 'The Hindu'],
 }
 
 const CONFIG = {
@@ -16,6 +18,7 @@ const CONFIG = {
     emoji: '🎮',
     placeholder: 'Search games, studios, releases...',
     fallbackEmoji: '🎮',
+    infoNote: null,
   },
   Hardware: {
     title: 'Tech',
@@ -24,6 +27,16 @@ const CONFIG = {
     emoji: '⚙️',
     placeholder: 'Search GPUs, CPUs, reviews...',
     fallbackEmoji: '⚙️',
+    infoNote: null,
+  },
+  Geopolitics: {
+    title: 'Geopolitics',
+    titleHighlight: 'Intel',
+    subtitle: '7 global sources across 5 regions — wire services, field reporters & analysts',
+    emoji: '🌍',
+    placeholder: 'Search conflicts, leaders, treaties, sanctions...',
+    fallbackEmoji: '🌍',
+    infoNote: 'Ground-reality filter: wire services + regional press from Western, Middle Eastern, European & South Asian perspectives. No state-run propaganda outlets.',
   },
 }
 
@@ -191,6 +204,14 @@ export default function NewsPage({ category = 'Gaming' }) {
           ↻
         </button>
       </div>
+
+      {/* ── Geopolitics Info Banner ── */}
+      {cfg.infoNote && (
+        <div className="geo-info-banner">
+          <span className="geo-info-icon">🛡️</span>
+          <span>{cfg.infoNote}</span>
+        </div>
+      )}
 
       {/* ── Search ── */}
       <div className="news-controls">

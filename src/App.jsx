@@ -55,6 +55,12 @@ export default function App() {
           >
             ⚙️ Tech Hardware
           </button>
+          <button
+            className={`nav-tab ${page === 'geopolitics-news' ? 'active' : ''}`}
+            onClick={() => navigate('geopolitics-news')}
+          >
+            🌍 Geopolitics
+          </button>
         </nav>
 
         <span className="header-sub">A Gamer's Retreat</span>
@@ -86,6 +92,14 @@ export default function App() {
           <span className="mobile-nav-icon">⚙️</span>
           <span className="mobile-nav-label">Hardware</span>
         </button>
+        <button
+          id="mob-nav-geopolitics"
+          className={`mobile-nav-btn ${page === 'geopolitics-news' ? 'active' : ''}`}
+          onClick={() => navigate('geopolitics-news')}
+        >
+          <span className="mobile-nav-icon">🌍</span>
+          <span className="mobile-nav-label">GeoIntel</span>
+        </button>
       </nav>
 
       {page === 'home' && (
@@ -103,6 +117,7 @@ export default function App() {
       )}
       {page === 'gaming-news' && <NewsPage category="Gaming" />}
       {page === 'hardware-news' && <NewsPage category="Hardware" />}
+      {page === 'geopolitics-news' && <NewsPage category="Geopolitics" />}
     </div>
   )
 }

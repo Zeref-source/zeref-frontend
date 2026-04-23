@@ -1223,3 +1223,24 @@ body {
     transform: scale(0.88);
   }
 }
+
+/* ============ Geopolitics Info Banner ============ */
+.geo-info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(218, 165, 32, 0.06);
+  border: 1px solid rgba(218, 165, 32, 0.22);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  font-size: 13px;
+  color: rgba(218, 165, 32, 0.75);
+  line-height: 1.5;
+}
+
+.geo-info-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
