@@ -1112,10 +1112,9 @@ body {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   /* ---- News page ---- */
   .news-page { padding: var(--sp-md); }
-  .news-grid { grid-template-columns: 1fr; }
 
   /* ---- Hide desktop nav, show subtitle differently ---- */
   .header-nav { display: none; }
@@ -1146,7 +1145,6 @@ body {
 
   /* ---- Results page ---- */
   .results-page { padding: var(--sp-md); }
-  .results-grid { grid-template-columns: 1fr; }
   .timestamps-card { max-height: none; }
 
   /* ---- Analyzing page ---- */
