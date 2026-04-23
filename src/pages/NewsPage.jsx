@@ -121,9 +121,15 @@ function NewsCard({ article, fallbackEmoji }) {
 // ── Main Page ──────────────────────────────────────────────────────────────
 export default function NewsPage({ category = 'Gaming' }) {
   const cfg = CONFIG[category]
-  const sources = SOURCE_MAP[category]
 
   const [articles, setArticles] = useState([])
+
+  // Dynamically generate source filters so cross-category articles (e.g. Anime from IGN) get their own pills
+  const sources = useMemo(() => {
+    if (articles.length === 0) return SOURCE_MAP[category] || []
+    return Array.from(new Set(articles.map(a => a.source))).sort()
+  }, [articles, category])
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeSource, setActiveSource] = useState('All')
