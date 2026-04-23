@@ -1,16 +1,10 @@
 import React, { useState } from 'react'
 import './index.css'
-import HomePage from './pages/HomePage'
-import AnalyzingPage from './pages/AnalyzingPage'
-import ResultsPage from './pages/ResultsPage'
 import NewsPage from './pages/NewsPage'
 
 export default function App() {
-  const [page, setPage] = useState('home')
-  const [jobId, setJobId] = useState(null)
-  const [results, setResults] = useState(null)
+  const [page, setPage] = useState('gaming-news')
 
-  const goHome = () => setPage('home')
   const navigate = (p) => setPage(p)
 
   return (
@@ -38,12 +32,6 @@ export default function App() {
 
         <nav className="header-nav">
           <button
-            className={`nav-tab ${['home', 'analyzing', 'results'].includes(page) ? 'active' : ''}`}
-            onClick={goHome}
-          >
-            🎬 Highlights
-          </button>
-          <button
             className={`nav-tab ${page === 'gaming-news' ? 'active' : ''}`}
             onClick={() => navigate('gaming-news')}
           >
@@ -68,14 +56,6 @@ export default function App() {
 
       {/* Mobile bottom navigation bar */}
       <nav className="mobile-bottom-nav">
-        <button
-          id="mob-nav-highlights"
-          className={`mobile-nav-btn ${['home', 'analyzing', 'results'].includes(page) ? 'active' : ''}`}
-          onClick={goHome}
-        >
-          <span className="mobile-nav-icon">🎬</span>
-          <span className="mobile-nav-label">Highlights</span>
-        </button>
         <button
           id="mob-nav-gaming"
           className={`mobile-nav-btn ${page === 'gaming-news' ? 'active' : ''}`}
@@ -102,19 +82,6 @@ export default function App() {
         </button>
       </nav>
 
-      {page === 'home' && (
-        <HomePage onAnalyze={(id) => { setJobId(id); setPage('analyzing') }} />
-      )}
-      {page === 'analyzing' && (
-        <AnalyzingPage
-          jobId={jobId}
-          onDone={(data) => { setResults(data); setPage('results') }}
-          onError={() => setPage('home')}
-        />
-      )}
-      {page === 'results' && (
-        <ResultsPage results={results} onBack={() => setPage('home')} />
-      )}
       {page === 'gaming-news' && <NewsPage category="Gaming" />}
       {page === 'hardware-news' && <NewsPage category="Hardware" />}
       {page === 'geopolitics-news' && <NewsPage category="Geopolitics" />}
