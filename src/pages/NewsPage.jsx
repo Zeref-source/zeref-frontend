@@ -142,7 +142,7 @@ export default function NewsPage({ category = 'Gaming' }) {
     else setLoading(true)
     setError('')
     try {
-      const res = await fetch(`${API_BASE}/news?limit=150${force ? '&force=true' : ''}`)
+      const res = await fetch(`${API_BASE}/news?limit=1000${force ? '&force=true' : ''}`)
       if (!res.ok) throw new Error('Backend error')
       const data = await res.json()
       // Only keep articles from this category's sources
