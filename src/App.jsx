@@ -38,6 +38,12 @@ export default function App() {
             🎮 Gaming News
           </button>
           <button
+            className={`nav-tab ${page === 'anime-news' ? 'active' : ''}`}
+            onClick={() => navigate('anime-news')}
+          >
+            🌸 Anime News
+          </button>
+          <button
             className={`nav-tab ${page === 'hardware-news' ? 'active' : ''}`}
             onClick={() => navigate('hardware-news')}
           >
@@ -65,6 +71,14 @@ export default function App() {
           <span className="mobile-nav-label">Gaming</span>
         </button>
         <button
+          id="mob-nav-anime"
+          className={`mobile-nav-btn ${page === 'anime-news' ? 'active' : ''}`}
+          onClick={() => navigate('anime-news')}
+        >
+          <span className="mobile-nav-icon">🌸</span>
+          <span className="mobile-nav-label">Anime</span>
+        </button>
+        <button
           id="mob-nav-hardware"
           className={`mobile-nav-btn ${page === 'hardware-news' ? 'active' : ''}`}
           onClick={() => navigate('hardware-news')}
@@ -83,6 +97,7 @@ export default function App() {
       </nav>
 
       {page === 'gaming-news' && <NewsPage category="Gaming" />}
+      {page === 'anime-news' && <NewsPage category="Anime" />}
       {page === 'hardware-news' && <NewsPage category="Hardware" />}
       {page === 'geopolitics-news' && <NewsPage category="Geopolitics" />}
     </div>
