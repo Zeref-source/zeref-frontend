@@ -146,6 +146,7 @@ export default function NewsPage({ category = 'Gaming' }) {
   const [search, setSearch] = useState('')
   const [lastUpdated, setLastUpdated] = useState(null)
   const [refreshing, setRefreshing] = useState(false)
+  const [subCategory, setSubCategory] = useState('IGC_Domestic')
 
   const fetchNews = async (force = false) => {
     if (force) setRefreshing(true)
@@ -156,9 +157,12 @@ export default function NewsPage({ category = 'Gaming' }) {
       if (!res.ok) throw new Error('Backend error')
       const data = await res.json()
       // Only keep articles from this category's sources
-      const categoryArticles = (data.articles || []).filter(
-        a => a.category === category
-      )
+      const categoryArticles = (data.articles || []).filter(a => {
+        if (category === 'IGC') {
+          return a.category === 'IGC_Domestic' || a.category === 'IGC_International'
+        }
+        return a.category === category
+      })
       setArticles(categoryArticles)
       setLastUpdated(new Date())
     } catch (e) {
@@ -185,6 +189,9 @@ export default function NewsPage({ category = 'Gaming' }) {
 
   const filtered = useMemo(() => {
     let list = articles
+    if (category === 'IGC') {
+      list = list.filter(a => a.category === subCategory)
+    }
     if (activeSource !== 'All') list = list.filter(a => a.source === activeSource)
     if (search.trim()) {
       const q = search.toLowerCase()
@@ -236,6 +243,24 @@ export default function NewsPage({ category = 'Gaming' }) {
         <div className="geo-info-banner">
           <span className="geo-info-icon">🛡️</span>
           <span>{cfg.infoNote}</span>
+        </div>
+      )}
+
+      {/* ── Sub-Category Toggle (Only for IGC) ── */}
+      {category === 'IGC' && (
+        <div className="sub-category-toggle">
+          <button 
+            className={`sub-tab-btn ${subCategory === 'IGC_Domestic' ? 'active' : ''}`}
+            onClick={() => setSubCategory('IGC_Domestic')}
+          >
+            🇮🇳 Domestic News
+          </button>
+          <button 
+            className={`sub-tab-btn ${subCategory === 'IGC_International' ? 'active' : ''}`}
+            onClick={() => setSubCategory('IGC_International')}
+          >
+            🌐 Global Esports
+          </button>
         </div>
       )}
 
