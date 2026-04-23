@@ -42,6 +42,12 @@ export default function App() {
           >
             🌍 Geopolitics
           </button>
+          <button
+            className={`nav-tab ${page === 'igc-news' ? 'active' : ''}`}
+            onClick={() => navigate('igc-news')}
+          >
+            🇮🇳 IGC News
+          </button>
         </nav>
 
         <span className="header-sub">A Gamer's Retreat</span>
@@ -81,12 +87,21 @@ export default function App() {
           <span className="mobile-nav-icon">🌍</span>
           <span className="mobile-nav-label">GeoIntel</span>
         </button>
+        <button
+          id="mob-nav-igc"
+          className={`mobile-nav-btn ${page === 'igc-news' ? 'active' : ''}`}
+          onClick={() => navigate('igc-news')}
+        >
+          <span className="mobile-nav-icon">🇮🇳</span>
+          <span className="mobile-nav-label">IGC</span>
+        </button>
       </nav>
 
       {page === 'gaming-news' && <NewsPage category="Gaming" />}
       {page === 'anime-news' && <NewsPage category="Anime" />}
       {page === 'hardware-news' && <NewsPage category="Hardware" />}
       {page === 'geopolitics-news' && <NewsPage category="Geopolitics" />}
+      {page === 'igc-news' && <NewsPage category="IGC" />}
     </div>
   )
 }
