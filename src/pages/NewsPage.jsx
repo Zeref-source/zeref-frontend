@@ -202,7 +202,7 @@ export default function NewsPage({ category = 'Gaming' }) {
       )
     }
     return list
-  }, [articles, activeSource, search])
+  }, [articles, activeSource, search, subCategory, category])
 
   const sourceCounts = useMemo(() => {
     const counts = {}
