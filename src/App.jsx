@@ -21,7 +21,7 @@ export default function App() {
               </linearGradient>
             </defs>
             <rect width="64" height="64" rx="12" fill="#060b10"/>
-            <rect x="1" y="1" width="62" height="62" rx="11" fill="none" stroke="#00d4d4" strokeWidth="0.8" opacity="0.6"/>
+            <rect x="1" y="1" width="62" height="62" rx="11" fill="none" stroke="#ff6b2b" strokeWidth="0.8" opacity="0.6"/>
             <polygon points="10,10 54,10 54,18 26,18" fill="url(#hzGrad)" opacity="0.95"/>
             <polygon points="26,18 54,18 38,46 10,46" fill="url(#hzGrad)" opacity="0.88"/>
             <polygon points="10,46 38,46 10,54 54,54 54,46" fill="url(#hzGrad)" opacity="0.95"/>

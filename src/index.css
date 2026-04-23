@@ -117,12 +117,12 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 8px rgba(0,212,212,0.4));
+  filter: drop-shadow(0 0 8px rgba(255,107,43,0.4));
 }
 
 .header-logo svg {
   flex-shrink: 0;
-  filter: drop-shadow(0 0 6px rgba(0,212,212,0.6));
+  filter: drop-shadow(0 0 6px rgba(255,107,43,0.6));
 }
 
 .header-sub {
