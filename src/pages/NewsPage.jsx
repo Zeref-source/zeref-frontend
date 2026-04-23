@@ -6,6 +6,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 const SOURCE_MAP = {
   Gaming: ['IGN', 'GameSpot', 'Eurogamer', 'Polygon', 'PC Gamer',
            'Rock Paper Shotgun', 'VGC', 'GamesIndustry.biz', 'Ars Technica', 'Game Developer'],
+  Anime: ['Anime News Network', 'Crunchyroll'],
   Hardware: ["Tom's Hardware", 'The Verge', 'Wccftech', 'Digital Trends', 'AnandTech'],
   Geopolitics: ['BBC World', 'Al Jazeera', 'France 24', 'DW World', 'Foreign Policy', 'The Guardian', 'The Hindu'],
 }
@@ -18,6 +19,15 @@ const CONFIG = {
     emoji: '🎮',
     placeholder: 'Search games, studios, releases...',
     fallbackEmoji: '🎮',
+    infoNote: null,
+  },
+  Anime: {
+    title: 'Anime',
+    titleHighlight: 'Culture',
+    subtitle: 'Latest anime, manga & pop-culture news from top networks',
+    emoji: '🌸',
+    placeholder: 'Search anime, studios, manga...',
+    fallbackEmoji: '🎌',
     infoNote: null,
   },
   Hardware: {
