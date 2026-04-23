@@ -43,8 +43,8 @@ export default function App() {
         <span className="header-sub">A Gamer's Retreat</span>
       </header>
 
-      {/* Mobile bottom nav — auto-generated */}
-      <nav className="mobile-bottom-nav">
+      {/* Mobile left sidebar nav */}
+      <nav className="mobile-side-nav">
         {TABS.map(tab => (
           <button
             key={tab.id}
@@ -58,10 +58,12 @@ export default function App() {
         ))}
       </nav>
 
-      {/* Page renderer — auto-generated */}
-      {TABS.map(tab => (
-        page === tab.id && <NewsPage key={tab.id} category={tab.category} />
-      ))}
+      {/* Main content, offset by sidebar */}
+      <div className="mobile-content">
+        {TABS.map(tab => (
+          page === tab.id && <NewsPage key={tab.id} category={tab.category} />
+        ))}
+      </div>
     </div>
   )
 }

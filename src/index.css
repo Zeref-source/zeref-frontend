@@ -1142,16 +1142,19 @@ body {
   100% { background-position: -200% 0; }
 }
 
-/* ============ Mobile Bottom Nav ============ */
-.mobile-bottom-nav {
+/* ============ Mobile Side Nav (Left Vertical Rail) ============ */
+.mobile-side-nav {
   display: none;
+}
+.mobile-content {
+  /* On desktop, no offset needed — side nav is hidden */
 }
 
 @media (max-width: 1024px) {
   /* ---- News page ---- */
   .news-page { padding: var(--sp-md); }
 
-  /* ---- Hide desktop nav, show subtitle differently ---- */
+  /* ---- Hide desktop nav ---- */
   .header-nav { display: none; }
   .header-sub { display: none; }
 
@@ -1186,60 +1189,77 @@ body {
   .analyzing-page { padding: var(--sp-lg) var(--sp-md); }
   .progress-pct { font-size: 36px; }
 
-  /* ---- Bottom padding so content clears bottom nav ---- */
-  .app-container { padding-bottom: 70px; }
-
-  /* ---- Show mobile bottom nav ---- */
-  .mobile-bottom-nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 200;
-    background: rgba(6, 11, 16, 0.95);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid var(--border-accent);
-    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    scrollbar-width: none; /* Firefox */
-  }
-  
-  .mobile-bottom-nav::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+  /* ---- Content area shifts right to clear sidebar ---- */
+  .mobile-content {
+    margin-left: 68px;
   }
 
-  .mobile-nav-btn {
-    flex: 1 0 84px;
+  /* ---- Left vertical sidebar ---- */
+  .mobile-side-nav {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 68px;
+    z-index: 150;
+    background: rgba(6, 11, 16, 0.97);
+    backdrop-filter: blur(20px);
+    border-right: 1px solid var(--border-accent);
+    padding: 80px 0 16px; /* top padding clears the fixed header */
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    gap: 4px;
+  }
+
+  .mobile-side-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-nav-btn {
+    width: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 3px;
     background: transparent;
     border: none;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    padding: 6px 4px;
+    padding: 10px 4px;
     transition: all 0.2s;
     position: relative;
+    flex-shrink: 0;
+  }
+
+  .mobile-nav-btn:hover {
+    background: rgba(255,107,43,0.08);
   }
 
   .mobile-nav-icon {
-    font-size: 22px;
+    font-size: 24px;
     line-height: 1;
     transition: transform 0.2s;
   }
 
   .mobile-nav-label {
     font-family: 'Outfit', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
+    font-size: 9px;
+    font-weight: 700;
     color: var(--text-muted);
     letter-spacing: 0.3px;
     text-transform: uppercase;
     transition: color 0.2s;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .mobile-nav-btn.active {
+    background: rgba(255,107,43,0.12);
   }
 
   .mobile-nav-btn.active .mobile-nav-label {
@@ -1247,24 +1267,29 @@ body {
   }
 
   .mobile-nav-btn.active .mobile-nav-icon {
-    transform: translateY(-2px);
+    transform: scale(1.15);
   }
 
-  .mobile-nav-btn.active::after {
+  /* Active indicator — left orange bar */
+  .mobile-nav-btn.active::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 25%;
-    right: 25%;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-    border-radius: 0 0 4px 4px;
+    left: 0;
+    top: 20%;
+    bottom: 20%;
+    width: 3px;
+    background: var(--accent-primary);
+    border-radius: 0 3px 3px 0;
+    box-shadow: 0 0 8px rgba(255,107,43,0.6);
   }
 
   .mobile-nav-btn:active .mobile-nav-icon {
     transform: scale(0.88);
   }
 }
+
+
+
 
 /* ============ Geopolitics Info Banner ============ */
 .geo-info-banner {
