@@ -2,10 +2,20 @@ import React, { useState } from 'react'
 import './index.css'
 import NewsPage from './pages/NewsPage'
 
+// ── SINGLE SOURCE OF TRUTH ─────────────────────────────────────────────────
+// To add a new tab, just add one object here. Done.
+const TABS = [
+  { id: 'gaming-news',     label: 'Gaming News',   shortLabel: 'Gaming',   icon: '🎮', category: 'Gaming'      },
+  { id: 'anime-news',      label: 'Anime News',    shortLabel: 'Anime',    icon: '🌸', category: 'Anime'       },
+  { id: 'hardware-news',   label: 'Tech Hardware', shortLabel: 'Hardware', icon: '⚙️', category: 'Hardware'    },
+  { id: 'geopolitics-news',label: 'Geopolitics',   shortLabel: 'GeoIntel', icon: '🌍', category: 'Geopolitics' },
+  { id: 'igc-news',        label: 'IGC News',      shortLabel: 'IGC',      icon: '🇮🇳', category: 'IGC'        },
+]
+
 export default function App() {
   const [page, setPage] = useState('gaming-news')
-
   const navigate = (p) => setPage(p)
+  const activeTab = TABS.find(t => t.id === page)
 
   return (
     <div className="app-container">
@@ -17,91 +27,41 @@ export default function App() {
           <span className="header-title">RealityDive</span>
         </span>
 
+        {/* Desktop nav — auto-generated */}
         <nav className="header-nav">
-          <button
-            className={`nav-tab ${page === 'gaming-news' ? 'active' : ''}`}
-            onClick={() => navigate('gaming-news')}
-          >
-            🎮 Gaming News
-          </button>
-          <button
-            className={`nav-tab ${page === 'anime-news' ? 'active' : ''}`}
-            onClick={() => navigate('anime-news')}
-          >
-            🌸 Anime News
-          </button>
-          <button
-            className={`nav-tab ${page === 'hardware-news' ? 'active' : ''}`}
-            onClick={() => navigate('hardware-news')}
-          >
-            ⚙️ Tech Hardware
-          </button>
-          <button
-            className={`nav-tab ${page === 'geopolitics-news' ? 'active' : ''}`}
-            onClick={() => navigate('geopolitics-news')}
-          >
-            🌍 Geopolitics
-          </button>
-          <button
-            className={`nav-tab ${page === 'igc-news' ? 'active' : ''}`}
-            onClick={() => navigate('igc-news')}
-          >
-            🇮🇳 IGC News
-          </button>
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              className={`nav-tab ${page === tab.id ? 'active' : ''}`}
+              onClick={() => navigate(tab.id)}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
         </nav>
 
         <span className="header-sub">A Gamer's Retreat</span>
       </header>
 
-      {/* Mobile bottom navigation bar */}
+      {/* Mobile bottom nav — auto-generated */}
       <nav className="mobile-bottom-nav">
-        <button
-          id="mob-nav-gaming"
-          className={`mobile-nav-btn ${page === 'gaming-news' ? 'active' : ''}`}
-          onClick={() => navigate('gaming-news')}
-        >
-          <span className="mobile-nav-icon">🎮</span>
-          <span className="mobile-nav-label">Gaming</span>
-        </button>
-        <button
-          id="mob-nav-anime"
-          className={`mobile-nav-btn ${page === 'anime-news' ? 'active' : ''}`}
-          onClick={() => navigate('anime-news')}
-        >
-          <span className="mobile-nav-icon">🌸</span>
-          <span className="mobile-nav-label">Anime</span>
-        </button>
-        <button
-          id="mob-nav-hardware"
-          className={`mobile-nav-btn ${page === 'hardware-news' ? 'active' : ''}`}
-          onClick={() => navigate('hardware-news')}
-        >
-          <span className="mobile-nav-icon">⚙️</span>
-          <span className="mobile-nav-label">Hardware</span>
-        </button>
-        <button
-          id="mob-nav-geopolitics"
-          className={`mobile-nav-btn ${page === 'geopolitics-news' ? 'active' : ''}`}
-          onClick={() => navigate('geopolitics-news')}
-        >
-          <span className="mobile-nav-icon">🌍</span>
-          <span className="mobile-nav-label">GeoIntel</span>
-        </button>
-        <button
-          id="mob-nav-igc"
-          className={`mobile-nav-btn ${page === 'igc-news' ? 'active' : ''}`}
-          onClick={() => navigate('igc-news')}
-        >
-          <span className="mobile-nav-icon">🇮🇳</span>
-          <span className="mobile-nav-label">IGC</span>
-        </button>
+        {TABS.map(tab => (
+          <button
+            key={tab.id}
+            id={`mob-nav-${tab.id}`}
+            className={`mobile-nav-btn ${page === tab.id ? 'active' : ''}`}
+            onClick={() => navigate(tab.id)}
+          >
+            <span className="mobile-nav-icon">{tab.icon}</span>
+            <span className="mobile-nav-label">{tab.shortLabel}</span>
+          </button>
+        ))}
       </nav>
 
-      {page === 'gaming-news' && <NewsPage category="Gaming" />}
-      {page === 'anime-news' && <NewsPage category="Anime" />}
-      {page === 'hardware-news' && <NewsPage category="Hardware" />}
-      {page === 'geopolitics-news' && <NewsPage category="Geopolitics" />}
-      {page === 'igc-news' && <NewsPage category="IGC" />}
+      {/* Page renderer — auto-generated */}
+      {TABS.map(tab => (
+        page === tab.id && <NewsPage key={tab.id} category={tab.category} />
+      ))}
     </div>
   )
 }
