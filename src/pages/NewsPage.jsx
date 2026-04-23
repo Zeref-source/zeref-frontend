@@ -9,6 +9,7 @@ const SOURCE_MAP = {
   Anime: ['Anime News Network', 'Crunchyroll'],
   Hardware: ["Tom's Hardware", 'The Verge', 'Wccftech', 'Digital Trends', 'AnandTech'],
   Geopolitics: ['BBC World', 'Al Jazeera', 'France 24', 'DW World', 'Foreign Policy', 'The Guardian', 'The Hindu'],
+  IGC: ['TalkEsport', 'Sportskeeda Esports', 'IGN India'],
 }
 
 const CONFIG = {
@@ -47,6 +48,15 @@ const CONFIG = {
     placeholder: 'Search conflicts, leaders, treaties, sanctions...',
     fallbackEmoji: '🌍',
     infoNote: 'Ground-reality filter: wire services + regional press from Western, Middle Eastern, European & South Asian perspectives. No state-run propaganda outlets.',
+  },
+  IGC: {
+    title: 'IGC',
+    titleHighlight: 'News',
+    subtitle: 'Indian Gaming Community — esports, creators, investments, and industry shifts',
+    emoji: '🇮🇳',
+    placeholder: 'Search esports, creators, BGMI, tournaments...',
+    fallbackEmoji: '🇮🇳',
+    infoNote: null,
   },
 }
 
