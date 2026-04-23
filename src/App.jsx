@@ -13,7 +13,7 @@ export default function App() {
 
       <header className="header">
         <span className="header-logo" style={{ cursor: 'pointer' }} onClick={() => navigate('gaming-news')}>
-          <img src="/logo.png" alt="RealityDive Logo" style={{ width: 40, height: 40, objectFit: 'contain', borderRadius: 8, filter: 'drop-shadow(0 0 8px rgba(255,107,43,0.6))' }} />
+          <img src="/logo.png" alt="RealityDive Logo" style={{ width: 64, height: 64, objectFit: 'contain', borderRadius: 8, filter: 'drop-shadow(0 0 8px rgba(255,107,43,0.6))' }} />
           <span className="header-title">RealityDive</span>
         </span>
 
