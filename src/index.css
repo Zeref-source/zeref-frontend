@@ -22,7 +22,7 @@
   --border:         rgba(255, 255, 255, 0.08);
   --border-accent:  rgba(255, 107, 43, 0.4);
 
-  --success:  #00f5a0;
+  --success:  #ff4500;
   --warning:  #ffd60a;
   --error:    #ff4d6d;
 
@@ -116,11 +116,8 @@ body {
   font-size: 24px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 8px rgba(255,107,43,0.4));
+  color: var(--accent-primary);
+  text-shadow: 0 0 12px rgba(255,107,43,0.6);
 }
 
 .header-logo svg {
@@ -171,11 +168,11 @@ body {
 }
 
 .hero-title .gradient-text {
-  background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 50%, #0088cc 100%);
+  background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 50%, #ff4500 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 20px rgba(0,212,212,0.3));
+  filter: drop-shadow(0 0 20px rgba(255,107,43,0.3));
 }
 
 .hero-description {
@@ -240,7 +237,7 @@ body {
 }
 
 .analyze-btn {
-  background: linear-gradient(135deg, #0088cc, var(--accent-primary), var(--accent-secondary));
+  background: linear-gradient(135deg, #ff4500, var(--accent-primary), var(--accent-secondary));
   border: none;
   border-radius: var(--radius-md);
   padding: 14px 24px;
@@ -251,11 +248,11 @@ body {
   cursor: pointer;
   white-space: nowrap;
   transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-  box-shadow: 0 4px 20px rgba(0,212,212,0.4);
+  box-shadow: 0 4px 20px rgba(255,107,43,0.4);
   letter-spacing: 0.3px;
 }
 
-.analyze-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,212,0.55); }
+.analyze-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,107,43,0.55); }
 .analyze-btn:active { transform: translateY(0); }
 .analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
