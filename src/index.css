@@ -109,8 +109,11 @@ body {
 .header-logo {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 20px;
+  gap: 12px;
+}
+
+.header-title {
+  font-size: 24px;
   font-weight: 800;
   letter-spacing: -0.5px;
   background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
