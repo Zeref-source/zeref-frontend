@@ -10,6 +10,7 @@ const SOURCE_MAP = {
   Hardware: ["Tom's Hardware", 'The Verge', 'Wccftech', 'Digital Trends', 'AnandTech'],
   Geopolitics: ['BBC World', 'Al Jazeera', 'France 24', 'DW World', 'Foreign Policy', 'The Guardian', 'The Hindu'],
   IGC: ['TalkEsport', 'Sportskeeda Esports', 'IGN India'],
+  Finance: ['Moneycontrol', 'Economic Times', 'LiveMint', 'Business Line', 'NDTV Profit', 'Zee Business'],
 }
 
 const CONFIG = {
@@ -56,6 +57,15 @@ const CONFIG = {
     emoji: '🇮🇳',
     placeholder: 'Search esports, creators, BGMI, tournaments...',
     fallbackEmoji: '🇮🇳',
+    infoNote: null,
+  },
+  Finance: {
+    title: 'INDIAN FINANCIAL',
+    titleHighlight: 'MARKET',
+    subtitle: 'Track the Indian financial heatmap and next day focus sectors from top sources',
+    emoji: '📈',
+    placeholder: 'Search markets, sectors, Nifty...',
+    fallbackEmoji: '📈',
     infoNote: null,
   },
 }
