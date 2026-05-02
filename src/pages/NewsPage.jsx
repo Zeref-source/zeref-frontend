@@ -9,7 +9,7 @@ const SOURCE_MAP = {
   Anime: ['Anime News Network', 'Crunchyroll'],
   Hardware: ["Tom's Hardware", 'The Verge', 'Wccftech', 'Digital Trends', 'AnandTech'],
   Geopolitics: ['BBC World', 'Al Jazeera', 'France 24', 'DW World', 'Foreign Policy', 'The Guardian', 'The Hindu'],
-  IGC: ['TalkEsport', 'Sportskeeda Esports', 'IGN India'],
+  S8UL: ['TalkEsport', 'IGN India', 'AFK Gaming'],
   Movies: ['IGN Movies', 'Variety', 'The Hollywood Reporter', 'Deadline', 'Collider', 'Screen Rant'],
   Finance: ['Moneycontrol', 'Economic Times', 'LiveMint', 'Business Line', 'NDTV Profit', 'Zee Business'],
 }
@@ -51,13 +51,13 @@ const CONFIG = {
     fallbackEmoji: '🌍',
     infoNote: 'Ground-reality filter: wire services + regional press from Western, Middle Eastern, European & South Asian perspectives. No state-run propaganda outlets.',
   },
-  IGC: {
-    title: 'IGC',
-    titleHighlight: 'News',
-    subtitle: 'Indian Gaming Community — esports, creators, investments, and industry shifts',
-    emoji: '🇮🇳',
-    placeholder: 'Search esports, creators, BGMI, tournaments...',
-    fallbackEmoji: '🇮🇳',
+  S8UL: {
+    title: 'S8UL',
+    titleHighlight: 'Universe',
+    subtitle: 'Everything S8UL — players, tournaments, BGMI, Valorant & the Indian esports ecosystem',
+    emoji: '💎',
+    placeholder: 'Search S8UL, Mortal, Scout, BGMI, VCT India...',
+    fallbackEmoji: '💎',
     infoNote: null,
   },
   Finance: {
@@ -177,12 +177,9 @@ export default function NewsPage({ category = 'Gaming' }) {
       if (!res.ok) throw new Error('Backend error')
       const data = await res.json()
       // Only keep articles from this category's sources
-      const categoryArticles = (data.articles || []).filter(a => {
-        if (category === 'IGC') {
-          return a.category === 'IGC_Domestic' || a.category === 'IGC_International'
-        }
-        return a.category === category
-      })
+      const categoryArticles = (data.articles || []).filter(a =>
+        a.category === category
+      )
       setArticles(categoryArticles)
       setLastUpdated(new Date())
     } catch (e) {
@@ -209,9 +206,6 @@ export default function NewsPage({ category = 'Gaming' }) {
 
   const filtered = useMemo(() => {
     let list = articles
-    if (category === 'IGC') {
-      list = list.filter(a => a.category === subCategory)
-    }
     if (activeSource !== 'All') list = list.filter(a => a.source === activeSource)
     if (search.trim()) {
       const q = search.toLowerCase()
@@ -263,24 +257,6 @@ export default function NewsPage({ category = 'Gaming' }) {
         <div className="geo-info-banner">
           <span className="geo-info-icon">🛡️</span>
           <span>{cfg.infoNote}</span>
-        </div>
-      )}
-
-      {/* ── Sub-Category Toggle (Only for IGC) ── */}
-      {category === 'IGC' && (
-        <div className="sub-category-toggle">
-          <button 
-            className={`sub-tab-btn ${subCategory === 'IGC_Domestic' ? 'active' : ''}`}
-            onClick={() => setSubCategory('IGC_Domestic')}
-          >
-            🇮🇳 Domestic News
-          </button>
-          <button 
-            className={`sub-tab-btn ${subCategory === 'IGC_International' ? 'active' : ''}`}
-            onClick={() => setSubCategory('IGC_International')}
-          >
-            🌐 Global Esports
-          </button>
         </div>
       )}
 
