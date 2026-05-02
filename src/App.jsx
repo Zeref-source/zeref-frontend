@@ -7,10 +7,9 @@ import NewsPage from './pages/NewsPage'
 const TABS = [
   { id: 'gaming-news',     label: 'Gaming News',   shortLabel: 'Gaming',   icon: '🎮', category: 'Gaming'      },
   { id: 'anime-news',      label: 'Anime News',    shortLabel: 'Anime',    icon: '🌸', category: 'Anime'       },
+  { id: 'movies-news',     label: 'Movies & TV',   shortLabel: 'Movies',   icon: '🎬', category: 'Movies'      },
   { id: 'hardware-news',   label: 'Tech Hardware', shortLabel: 'Hardware', icon: '⚙️', category: 'Hardware'    },
   { id: 'geopolitics-news',label: 'Geopolitics',   shortLabel: 'GeoIntel', icon: '🌍', category: 'Geopolitics' },
-
-  { id: 'movies-news',     label: 'Movies & TV',   shortLabel: 'Movies',   icon: '🎬', category: 'Movies'      },
   { id: 'finance-news',    label: 'Financial Market',shortLabel:'Finance', icon: '📈', category: 'Finance'     },
 ]
 
