@@ -10,6 +10,7 @@ const SOURCE_MAP = {
   Hardware: ["Tom's Hardware", 'The Verge', 'Wccftech', 'Digital Trends', 'AnandTech'],
   Geopolitics: ['BBC World', 'Al Jazeera', 'France 24', 'DW World', 'Foreign Policy', 'The Guardian', 'The Hindu'],
   IGC: ['TalkEsport', 'Sportskeeda Esports', 'IGN India'],
+  Movies: ['IGN Movies', 'Variety', 'The Hollywood Reporter', 'Deadline', 'Collider', 'Screen Rant'],
   Finance: ['Moneycontrol', 'Economic Times', 'LiveMint', 'Business Line', 'NDTV Profit', 'Zee Business'],
 }
 
@@ -66,6 +67,15 @@ const CONFIG = {
     emoji: '📈',
     placeholder: 'Search markets, sectors, Nifty...',
     fallbackEmoji: '📈',
+    infoNote: null,
+  },
+  Movies: {
+    title: 'Movies &',
+    titleHighlight: 'TV',
+    subtitle: 'Hollywood, OTT & entertainment — trailers, reviews, box office & streaming from 6 sources',
+    emoji: '🎬',
+    placeholder: 'Search movies, shows, trailers, directors...',
+    fallbackEmoji: '🎬',
     infoNote: null,
   },
 }
