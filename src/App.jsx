@@ -9,7 +9,7 @@ const TABS = [
   { id: 'anime-news',      label: 'Anime News',    shortLabel: 'Anime',    icon: '🌸', category: 'Anime'       },
   { id: 'hardware-news',   label: 'Tech Hardware', shortLabel: 'Hardware', icon: '⚙️', category: 'Hardware'    },
   { id: 'geopolitics-news',label: 'Geopolitics',   shortLabel: 'GeoIntel', icon: '🌍', category: 'Geopolitics' },
-  { id: 's8ul-news',        label: 'S8UL News',     shortLabel: 'S8UL',     icon: '💎', category: 'S8UL'        },
+
   { id: 'movies-news',     label: 'Movies & TV',   shortLabel: 'Movies',   icon: '🎬', category: 'Movies'      },
   { id: 'finance-news',    label: 'Financial Market',shortLabel:'Finance', icon: '📈', category: 'Finance'     },
 ]

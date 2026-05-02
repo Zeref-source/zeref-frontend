@@ -9,7 +9,6 @@ const SOURCE_MAP = {
   Anime: ['Anime News Network', 'Crunchyroll'],
   Hardware: ["Tom's Hardware", 'The Verge', 'Wccftech', 'Digital Trends', 'AnandTech'],
   Geopolitics: ['BBC World', 'Al Jazeera', 'France 24', 'DW World', 'Foreign Policy', 'The Guardian', 'The Hindu'],
-  S8UL: ['TalkEsport', 'IGN India', 'AFK Gaming'],
   Movies: ['IGN Movies', 'Variety', 'The Hollywood Reporter', 'Deadline', 'Collider', 'Screen Rant'],
   Finance: ['Moneycontrol', 'Economic Times', 'LiveMint', 'Business Line', 'NDTV Profit', 'Zee Business'],
 }
@@ -50,15 +49,6 @@ const CONFIG = {
     placeholder: 'Search conflicts, leaders, treaties, sanctions...',
     fallbackEmoji: '🌍',
     infoNote: 'Ground-reality filter: wire services + regional press from Western, Middle Eastern, European & South Asian perspectives. No state-run propaganda outlets.',
-  },
-  S8UL: {
-    title: 'S8UL',
-    titleHighlight: 'Universe',
-    subtitle: 'Everything S8UL — players, tournaments, BGMI, Valorant & the Indian esports ecosystem',
-    emoji: '💎',
-    placeholder: 'Search S8UL, Mortal, Scout, BGMI, VCT India...',
-    fallbackEmoji: '💎',
-    infoNote: null,
   },
   Finance: {
     title: 'INDIAN FINANCIAL',
