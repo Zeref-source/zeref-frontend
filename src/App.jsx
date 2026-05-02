@@ -10,6 +10,7 @@ const TABS = [
   { id: 'movies-news',     label: 'Movies & TV',   shortLabel: 'Movies',   icon: '🎬', category: 'Movies'      },
   { id: 'hardware-news',   label: 'Tech Hardware', shortLabel: 'Hardware', icon: '⚙️', category: 'Hardware'    },
   { id: 'geopolitics-news',label: 'Geopolitics',   shortLabel: 'GeoIntel', icon: '🌍', category: 'Geopolitics' },
+  { id: 'india-news',      label: 'India',         shortLabel: 'India',    icon: '🇮🇳', category: 'India'       },
   { id: 'finance-news',    label: 'Financial Market',shortLabel:'Finance', icon: '📈', category: 'Finance'     },
 ]
 
