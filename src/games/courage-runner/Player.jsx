@@ -89,20 +89,26 @@ export default function Player() {
   })
 
   return (
-    <mesh ref={mesh} position={[0, 1, 0]} castShadow>
-      {/* For now, a purple box representing Courage */}
-      <boxGeometry args={[1.5, 2, 1]} />
-      <meshStandardMaterial color="#d4a5ff" />
+    <group ref={mesh} position={[0, 1, 0]}>
+      <mesh castShadow>
+        {/* For now, a purple box representing Courage */}
+        <boxGeometry args={[1.5, 2, 1]} />
+        <meshStandardMaterial color="#d4a5ff" emissive="#d4a5ff" emissiveIntensity={0.1} />
+        
+        {/* Ears / Placeholder detail */}
+        <mesh position={[0.5, 1, 0]}>
+          <boxGeometry args={[0.3, 0.8, 0.2]} />
+          <meshStandardMaterial color="#d4a5ff" />
+        </mesh>
+        <mesh position={[-0.5, 1, 0]}>
+          <boxGeometry args={[0.3, 0.8, 0.2]} />
+          <meshStandardMaterial color="#d4a5ff" />
+        </mesh>
+      </mesh>
       
-      {/* Ears / Placeholder detail */}
-      <mesh position={[0.5, 1, 0]}>
-        <boxGeometry args={[0.3, 0.8, 0.2]} />
-        <meshStandardMaterial color="#d4a5ff" />
-      </mesh>
-      <mesh position={[-0.5, 1, 0]}>
-        <boxGeometry args={[0.3, 0.8, 0.2]} />
-        <meshStandardMaterial color="#d4a5ff" />
-      </mesh>
-    </mesh>
+      {/* Local player glow */}
+      <pointLight position={[0, 2, 0]} intensity={2} distance={8} color="#d4a5ff" />
+    </group>
   )
 }
+

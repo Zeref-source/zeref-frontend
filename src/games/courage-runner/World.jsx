@@ -13,13 +13,13 @@ function FloorChunk({ position }) {
       {/* Main Ground */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[100, CHUNK_SIZE]} />
-        <meshStandardMaterial color="#4a2a5a" roughness={1} />
+        <meshStandardMaterial color="#2a1a3a" roughness={0.9} metalness={0.1} />
       </mesh>
       
       {/* Path / Lane Area */}
       <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[15, CHUNK_SIZE]} />
-        <meshStandardMaterial color="#3a1a4a" roughness={0.8} />
+        <meshStandardMaterial color="#1a0a2a" roughness={0.7} />
       </mesh>
 
       {/* Side Scenery Decorations */}
