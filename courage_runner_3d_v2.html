@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Courage Runs 3D v2 - RealityDive</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Outfit:wght@400;700&display=swap');
+        
+        :root {
+            --c-pink: #FF69B4;
+            --c-gold: #ffdd00;
+            --c-red: #ff3300;
+        }
+
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; background: #050308; 
+            font-family: 'Outfit', sans-serif;
+        }
+
+        #game-container { position: relative; width: 100vw; height: 100vh; }
+        canvas { display: block; width: 100%; height: 100%; }
+
+        /* --- HUD (DOM Overlay) --- */
+        #hud {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; padding: 20px; box-sizing: border-box;
+            z-index: 10; display: flex; flex-direction: column;
+            color: white; text-shadow: 0 0 10px rgba(75, 0, 130, 0.8);
+        }
+
+        .creep { font-family: 'Creepster', cursive; }
+        .score-row { display: flex; justify-content: space-between; align-items: flex-start; }
+        .score-label { font-size: 42px; color: white; }
+        .high-score { font-size: 24px; text-align: right; opacity: 0.8; }
+        
+        .status-area { margin-top: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .lives-container { display: flex; gap: 8px; }
+        .life-icon { width: 35px; height: 35px; filter: drop-shadow(0 0 5px var(--c-pink)); transition: filter 0.3s, opacity 0.3s; }
+        .life-icon.lost { filter: grayscale(1); opacity: 0.3; }
+
+        .powerup-area { width: 200px; height: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; overflow: hidden; display: none; }
+        #powerup-fill { width: 100%; height: 100%; background: #0ff; transition: width 0.1s linear; }
+
+        .mute-toggle { 
+            position: absolute; top: 20px; right: 20px; 
+            pointer-events: auto; cursor: pointer; font-size: 32px; 
+            background: rgba(0,0,0,0.4); border-radius: 50%; width: 50px; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--c-pink);
+        }
+
+        .lane-dots {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 20px;
+        }
+        .dot { width: 14px; height: 14px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: 0.2s; }
+        .dot.active { background: var(--c-pink); box-shadow: 0 0 15px var(--c-pink); transform: scale(1.3); }
+
+        /* --- SCREENS --- */
+        #screen {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.8);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 100; pointer-events: auto; text-align: center;
+        }
+        .title-text { font-size: 100px; color: var(--c-pink); margin: 0; letter-spacing: 5px; }
+        .sub-text { font-size: 28px; margin: 20px 0 40px; color: #94a3b8; }
+        .btn {
+            padding: 20px 60px; font-size: 32px; background: #1a0a2e; color: var(--c-pink);
+            border: 3px solid var(--c-pink); border-radius: 12px; cursor: pointer;
+            transition: 0.2s; box-shadow: 0 0 20px rgba(255,105,180,0.3);
+        }
+        .btn:hover { background: var(--c-pink); color: #1a0a2e; transform: scale(1.05); }
+
+        #toast {
+            position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 50px; color: var(--c-gold); opacity: 0; pointer-events: none;
+        }
+
+        /* --- MIXER --- */
+        #mixer {
+            position: absolute; top: 80px; right: 20px; width: 180px;
+            background: rgba(0,0,0,0.8); border: 1px solid var(--c-pink);
+            border-radius: 8px; padding: 15px; display: none; pointer-events: auto;
+        }
+        .mixer-row { margin-bottom: 10px; }
+        .mixer-row label { display: block; font-size: 12px; color: var(--c-pink); text-transform: uppercase; margin-bottom: 5px; }
+        input[type=range] { width: 100%; accent-color: var(--c-pink); }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="game"></canvas>
+    
+    <div id="hud">
+        <div class="score-row">
+            <div>
+                <div class="score-label creep">SCORE: <span id="score-val">0</span></div>
+                <div class="status-area">
+                    <div class="lives-container" id="lives-ui"></div>
+                    <div class="powerup-area" id="pui"><div id="powerup-fill"></div></div>
+                </div>
+            </div>
+            <div class="high-score creep">HIGH: <span id="high-val">0</span></div>
+        </div>
+
+        <div class="mute-toggle" id="mute-btn">🔊</div>
+        <div id="mixer">
+            <div class="mixer-row"><label>Music</label><input type="range" id="vol-music" min="0" max="1" step="0.01" value="0.5"></div>
+            <div class="mixer-row"><label>SFX</label><input type="range" id="vol-sfx" min="0" max="1" step="0.01" value="0.7"></div>
+            <div class="mixer-row"><label>Ambient</label><input type="range" id="vol-amb" min="0" max="1" step="0.01" value="0.4"></div>
+            <div class="mixer-row"><label>Voice</label><input type="range" id="vol-voice" min="0" max="1" step="0.01" value="0.8"></div>
+        </div>
+
+        <div class="lane-dots">
+            <div class="dot" id="dot0"></div>
+            <div class="dot active" id="dot1"></div>
+            <div class="dot" id="dot2"></div>
+        </div>
+
+        <div id="toast" class="creep"></div>
+
+        <div id="screen">
+            <h1 class="title-text creep" id="screen-title">COURAGE RUNS!</h1>
+            <p class="sub-text" id="screen-sub">Dodge the nightmares of Nowhere.</p>
+            <button class="btn creep" id="start-btn">LETS GO!</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+/**
+ * COURAGE RUNS 3D v2
+ * -----------------------------------------
+ */
+
+// --- 1. CONFIG ---
+const CFG = {
+    W: window.innerWidth,
+    H: window.innerHeight,
+    LANES: [-3.2, 0, 3.2],
+    BASE_SPEED: 0.5,
+    MAX_SPEED: 2.0,
+    SPEED_INC: 0.0001,
+    GRAVITY: -28,
+    JUMP_FORCE: 10.5,
+    LIVES: 3,
+    COLORS: {
+        PINK: 0xFF69B4,
+        DARK_PINK: 0xD81B60,
+        GROUND: 0x1a1208,
+        SKY_TOP: 0x0a001f,
+        SKY_HORIZON: 0x1f0a1a,
+        FOG: 0x1a0030
+    }
+};
+
+// --- 2. TEXTURE FACTORY ---
+const TextureFactory = {
+    cache: {},
+    generate() {
+        this.cache.ground = this.createGround();
+        this.cache.groundNormal = this.createGroundNormal();
+        this.cache.mask = this.createMask();
+        this.cache.cookie = this.createCookie();
+        this.cache.katz = this.createKatz();
+    },
+    createGround() {
+        const c = document.createElement('canvas'); c.width = c.height = 512;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#1a1208'; ctx.fillRect(0,0,512,512);
+        for(let i=0; i<2000; i++) {
+            ctx.fillStyle = `rgba(35,21,8,${Math.random()*0.3})`;
+            ctx.fillRect(Math.random()*512, Math.random()*512, 4, 4);
+        }
+        // Lane paths
+        ctx.fillStyle = 'rgba(42,31,16, 0.4)';
+        ctx.fillRect(0, 0, 100, 512); ctx.fillRect(206, 0, 100, 512); ctx.fillRect(412, 0, 100, 512);
+        const tex = new THREE.CanvasTexture(c); tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(8, 2); return tex;
+    },
+    createGroundNormal() {
+        const c = document.createElement('canvas'); c.width = c.height = 512;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = 'rgb(128,128,255)'; ctx.fillRect(0,0,512,512);
+        const tex = new THREE.CanvasTexture(c); tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(8, 2); return tex;
+    },
+    createMask() {
+        const c = document.createElement('canvas'); c.width = c.height = 256;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(128, 128, 100, 120, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(90, 100, 20, 30, 0, 0, Math.PI*2); ctx.ellipse(166, 100, 20, 30, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillRect(80, 50, 96, 15); // Angry brows
+        ctx.beginPath(); ctx.arc(128, 180, 50, 0.2, Math.PI-0.2); ctx.lineWidth=10; ctx.stroke();
+        return new THREE.CanvasTexture(c);
+    },
+    createCookie() {
+        const c = document.createElement('canvas'); c.width = c.height = 64;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#d4af37'; ctx.beginPath(); ctx.arc(32,32,30,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#5d4037'; for(let i=0; i<8; i++) ctx.fillRect(15+Math.random()*30, 15+Math.random()*30, 4, 4);
+        return new THREE.CanvasTexture(c);
+    },
+    createKatz() {
+        const c = document.createElement('canvas'); c.width = c.height = 128;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#800'; ctx.fillRect(0,0,128,128);
+        ctx.strokeStyle = '#a22'; ctx.lineWidth=2;
+        for(let i=0; i<128; i+=10) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(128, i+20); ctx.stroke(); }
+        return new THREE.CanvasTexture(c);
+    }
+};
+
+// --- 3. THREE SETUP ---
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(65, CFG.W/CFG.H, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game'), antialias: true });
+renderer.setSize(CFG.W, CFG.H);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+scene.fog = new THREE.FogExp2(CFG.COLORS.FOG, 0.018);
+
+// Adaptive Sky Shader
+const skyMat = new THREE.ShaderMaterial({
+    uniforms: { time: { value: 0 } },
+    side: THREE.BackSide,
+    vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `
+        uniform float time;
+        varying vec2 vUv;
+        void main() {
+            float h = vUv.y;
+            vec3 top = vec3(0.04, 0.0, 0.12);
+            vec3 horizon = vec3(0.12, 0.04, 0.08);
+            vec3 color = mix(horizon, top, pow(h, 0.6));
+            float aurora = sin(vUv.x * 8.0 + time * 0.3) * sin(vUv.y * 4.0 - time * 0.2) * 0.04 * step(0.5, vUv.y);
+            gl_FragColor = vec4(color + vec3(0.0, aurora*0.3, aurora*0.6), 1.0);
+        }
+    `
+});
+const sky = new THREE.Mesh(new THREE.SphereGeometry(300, 32, 32), skyMat);
+scene.add(sky);
+
+// Lighting Rig
+const moonLight = new THREE.DirectionalLight(0xc8b8ff, 1.2);
+moonLight.position.set(-15, 30, -10);
+moonLight.castShadow = true;
+moonLight.shadow.mapSize.set(2048, 2048);
+moonLight.shadow.camera.left = moonLight.shadow.camera.bottom = -30;
+moonLight.shadow.camera.right = moonLight.shadow.camera.top = 30;
+scene.add(moonLight);
+
+const fillLight = new THREE.DirectionalLight(0x2a1a4a, 0.3);
+fillLight.position.set(0, -5, 5);
+scene.add(fillLight);
+
+const ambientBase = new THREE.AmbientLight(0x0d0520, 0.5);
+scene.add(ambientBase);
+
+// --- 4. AUDIO SYSTEM ---
+const AudioSystem = {
+    ctx: null,
+    buses: {},
+    mixer: { music: 0.5, sfx: 0.7, amb: 0.4, voice: 0.8 },
+    bpm: 100,
+    init() {
+        if (this.ctx) return;
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        this.master = this.ctx.createGain();
+        this.compressor = this.ctx.createDynamicsCompressor();
+        this.master.connect(this.compressor);
+        this.compressor.connect(this.ctx.destination);
+        
+        ['music', 'sfx', 'amb', 'voice'].forEach(name => {
+            this.buses[name] = this.ctx.createGain();
+            this.buses[name].gain.value = this.mixer[name];
+            this.buses[name].connect(this.master);
+        });
+
+        this.startBGM();
+        this.startWind();
+    },
+    startBGM() {
+        // Drone
+        const osc1 = this.ctx.createOscillator(); osc1.type = 'sawtooth'; osc1.frequency.value = 55;
+        const osc2 = this.ctx.createOscillator(); osc2.type = 'sawtooth'; osc2.frequency.value = 57.5;
+        const filter = this.ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 200;
+        const g = this.ctx.createGain(); g.gain.value = 0.18;
+        osc1.connect(filter); osc2.connect(filter); filter.connect(g); g.connect(this.buses.music);
+        osc1.start(); osc2.start();
+
+        // Heartbeat
+        this.hbInterval = setInterval(() => {
+            if (S.status !== 'PLAYING') return;
+            this.playKick();
+            setTimeout(() => this.playHat(), 300);
+        }, 600);
+    },
+    playKick() {
+        const o = this.ctx.createOscillator(); const g = this.ctx.createGain();
+        o.frequency.setValueAtTime(120, this.ctx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.15);
+        g.gain.setValueAtTime(0.4, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+        o.connect(g); g.connect(this.buses.music); o.start(); o.stop(this.ctx.currentTime + 0.15);
+    },
+    playHat() {
+        const n = this.ctx.createBufferSource(); const g = this.ctx.createGain();
+        const b = this.ctx.createBuffer(1, 4410, 44100); const d = b.getChannelData(0);
+        for(let i=0; i<4410; i++) d[i] = Math.random()*2-1;
+        n.buffer = b; const f = this.ctx.createBiquadFilter(); f.type='highpass'; f.frequency.value=8000;
+        g.gain.setValueAtTime(0.05, this.ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime+0.04);
+        n.connect(f); f.connect(g); g.connect(this.buses.music); n.start();
+    },
+    startWind() {
+        const g = this.ctx.createGain(); g.gain.value = 0.04;
+        const f = this.ctx.createBiquadFilter(); f.type='bandpass'; f.frequency.value=300;
+        const n = this.ctx.createBufferSource(); const b = this.ctx.createBuffer(1, 44100*2, 44100); const d = b.getChannelData(0);
+        for(let i=0; i<b.length; i++) d[i] = Math.random()*2-1;
+        n.buffer = b; n.loop = true; n.connect(f); f.connect(g); g.connect(this.buses.amb); n.start();
+    },
+    playSFX(type, pan = 0) {
+        if (!this.ctx) return;
+        const p = this.ctx.createPanner(); p.pan.value = pan;
+        const g = this.ctx.createGain(); p.connect(g); g.connect(this.buses.sfx);
+        
+        if (type === 'jump') {
+            const o = this.ctx.createOscillator(); o.frequency.exponentialRampToValueAtTime(520, this.ctx.currentTime + 0.2);
+            o.connect(p); o.start(); o.stop(this.ctx.currentTime+0.3);
+        }
+        if (type === 'hit') {
+            const o = this.ctx.createOscillator(); o.type='sawtooth'; o.frequency.linearRampToValueAtTime(80, this.ctx.currentTime+0.4);
+            o.connect(p); o.start(); o.stop(this.ctx.currentTime+0.4);
+        }
+    }
+};
+
+// --- 5. GAME OBJECTS ---
+const S = {
+    status: 'TITLE',
+    score: 0, highScore: localStorage.getItem('courage_v2_high') || 0,
+    speed: CFG.BASE_SPEED,
+    lane: 1, targetX: 0, switching: false, switchProg: 0,
+    jump: { active: false, vel: 0 },
+    slide: { active: false, time: 0 },
+    lives: CFG.LIVES, invincible: 0,
+    obstacles: [], cookies: [], pool: { obs: [], cook: [] }
+};
+
+TextureFactory.generate();
+
+// Courage Construction
+function createCourage() {
+    const group = new THREE.Group();
+    const mat = new THREE.MeshToonMaterial({ color: CFG.COLORS.PINK, emissive: CFG.COLORS.PINK, emissiveIntensity: 0.2 });
+    
+    const body = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 16), mat); body.scale.y = 0.85;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 16), mat); head.position.y = 1.2;
+    
+    const earL = new THREE.Mesh(new THREE.ConeGeometry(0.3, 1.5, 8), new THREE.MeshToonMaterial({ color: CFG.COLORS.DARK_PINK }));
+    earL.position.set(-0.8, 1.8, 0); earL.rotation.z = Math.PI/4;
+    const earR = earL.clone(); earR.position.x = 0.8; earR.rotation.z = -Math.PI/4;
+
+    const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.4, 8, 8), new THREE.MeshToonMaterial({ color: 0xffffff }));
+    eyeL.position.set(-0.4, 1.5, 0.9);
+    const pupilL = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), new THREE.MeshToonMaterial({ color: 0x000000 }));
+    pupilL.position.set(-0.4, 1.5, 1.25);
+    
+    const legs = [];
+    for(let i=0; i<4; i++) {
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.6), mat);
+        leg.position.set(i < 2 ? -0.5 : 0.5, -0.8, i % 2 === 0 ? 0.4 : -0.4);
+        group.add(leg); legs.push(leg);
+    }
+
+    group.add(body, head, earL, earR, eyeL, eyeL.clone().setX(0.4), pupilL, pupilL.clone().setX(0.4));
+    group.traverse(o => { if(o.isMesh) o.castShadow = true; });
+
+    const rim = new THREE.PointLight(0xff88cc, 2.5, 4, 2);
+    group.add(rim); rim.position.set(1.5, 1, 1);
+
+    return { group, legs, earL, earR, body };
+}
+
+const courage = createCourage();
+scene.add(courage.group);
+
+// Ground & Environment
+const groundMat = new THREE.MeshStandardMaterial({ 
+    map: TextureFactory.cache.ground, 
+    normalMap: TextureFactory.cache.groundNormal,
+    roughness: 0.95 
+});
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(500, 60), groundMat);
+ground.rotation.x = -Math.PI/2; ground.receiveShadow = true;
+scene.add(ground);
+
+const shadow = new THREE.Mesh(new THREE.CircleGeometry(1, 32), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.4 }));
+shadow.rotation.x = -Math.PI/2; shadow.position.y = 0.02;
+scene.add(shadow);
+
+// Obstacle Pool
+for(let i=0; i<20; i++) {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(2, 4, 2), new THREE.MeshToonMaterial({ map: TextureFactory.cache.katz }));
+    m.visible = false; scene.add(m); S.pool.obs.push({ mesh: m, active: false });
+}
+
+// --- 6. UPDATE LOOP ---
+const clock = new THREE.Clock();
+function update() {
+    const delta = clock.getDelta();
+    const time = clock.getElapsedTime();
+    skyMat.uniforms.time.value = time;
+
+    if (S.status === 'PLAYING') {
+        S.score += S.speed * 2;
+        S.speed += CFG.SPEED_INC;
+
+        // Lateral Slide (Area 5 Overhaul)
+        if (S.switching) {
+            S.switchProg += delta / 0.14;
+            if (S.switchProg >= 1) { S.switchProg = 1; S.switching = false; }
+            const t = 1 - Math.pow(1 - S.switchProg, 3); // easeOutCubic
+            courage.group.position.x = THREE.MathUtils.lerp(CFG.LANES[S.oldLane], CFG.LANES[S.lane], t);
+            
+            // Ear/Body Tilt
+            const lean = (S.lane - S.oldLane) * -0.15;
+            courage.body.rotation.z = THREE.MathUtils.lerp(courage.body.rotation.z, lean, 0.2);
+        } else {
+            courage.body.rotation.z = THREE.MathUtils.lerp(courage.body.rotation.z, 0, 0.1);
+        }
+
+        // Jump
+        if (S.jump.active) {
+            S.jump.vel += CFG.GRAVITY * delta;
+            courage.group.position.y += S.jump.vel * delta;
+            if (courage.group.position.y <= 0) {
+                courage.group.position.y = 0; S.jump.active = false;
+                AudioSystem.playSFX('land');
+            }
+        }
+
+        // Animations
+        const runT = time * 15 * S.speed;
+        courage.legs.forEach((l, i) => l.rotation.x = Math.sin(runT + (i%2)*Math.PI) * 0.8);
+        shadow.position.x = courage.group.position.x;
+        shadow.scale.setScalar(1 - courage.group.position.y * 0.2);
+
+        // World Scroll
+        groundMat.map.offset.y -= S.speed * delta * 5;
+
+        // Obstacle Spawn
+        if (Math.random() < 0.02) {
+            const o = S.pool.obs.find(x => !x.active);
+            if (o) {
+                o.active = true; o.mesh.visible = true;
+                o.mesh.position.set(CFG.LANES[Math.floor(Math.random()*3)], 2, -150);
+            }
+        }
+
+        S.pool.obs.forEach(o => {
+            if (!o.active) return;
+            o.mesh.position.z += S.speed * 80 * delta;
+            if (o.mesh.position.z > 20) { o.active = false; o.mesh.visible = false; }
+            if (o.active && S.invincible <= 0 && courage.group.position.distanceTo(o.mesh.position) < 2.5) {
+                S.lives--; S.invincible = 2; AudioSystem.playSFX('hit');
+                if (S.lives <= 0) endGame();
+            }
+        });
+
+        if (S.invincible > 0) { S.invincible -= delta; courage.group.visible = Math.floor(time*10)%2===0; }
+        else courage.group.visible = true;
+
+        // Camera follow
+        camera.position.x = THREE.MathUtils.lerp(camera.position.x, courage.group.position.x * 0.15, 0.08);
+        camera.position.y = THREE.MathUtils.lerp(camera.position.y, 4 + courage.group.position.y * 0.2, 0.1);
+        camera.lookAt(courage.group.position.x * 0.1, 1.5, -5);
+
+        updateHUD();
+    }
+}
+
+function updateHUD() {
+    document.getElementById('score-val').innerText = Math.floor(S.score);
+    document.getElementById('high-val').innerText = Math.floor(S.highScore);
+    document.getElementById('lives-ui').innerHTML = '<svg class="life-icon" viewBox="0 0 32 32"><path d="M16 28.267c-.667 0-1.333-.333-1.867-1-1.333-1.6-4.667-4.4-6.8-6.133-3.2-2.667-5.333-5.2-5.333-8.267 0-4.133 3.333-7.467 7.467-7.467 2.4 0 4.533 1.2 6.533 3.2 2-2 4.133-3.2 6.533-3.2 4.133 0 7.467 3.333 7.467 7.467 0 3.067-2.133 5.6-5.333 8.267-2.133 1.733-5.467 4.533-6.8 6.133-.533.667-1.2 1-1.867 1z"/></svg>'.repeat(S.lives);
+}
+
+function startGame() {
+    AudioSystem.init();
+    S.status = 'PLAYING'; S.score = 0; S.lives = CFG.LIVES; S.speed = CFG.BASE_SPEED;
+    document.getElementById('screen').style.display = 'none';
+}
+
+function endGame() {
+    S.status = 'GAME_OVER';
+    document.getElementById('screen').style.display = 'flex';
+    document.getElementById('screen-title').innerText = 'STUPID DOG!';
+    document.getElementById('screen-sub').innerText = `Final Score: ${Math.floor(S.score)}`;
+    if (S.score > S.highScore) { S.highScore = S.score; localStorage.setItem('courage_v2_high', S.highScore); }
+}
+
+// --- 7. INPUT ---
+window.addEventListener('keydown', e => {
+    if (S.status !== 'PLAYING') return;
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') { if(S.lane > 0 && !S.switching) { S.oldLane = S.lane; S.lane--; S.switching = true; S.switchProg = 0; AudioSystem.playSFX('swoosh', -0.6); } }
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') { if(S.lane < 2 && !S.switching) { S.oldLane = S.lane; S.lane++; S.switching = true; S.switchProg = 0; AudioSystem.playSFX('swoosh', 0.6); } }
+    if ((e.code === 'ArrowUp' || e.code === 'KeyW' || e.code === 'Space') && !S.jump.active) { S.jump.active = true; S.jump.vel = CFG.JUMP_FORCE; AudioSystem.playSFX('jump'); }
+    
+    for(let i=0; i<3; i++) document.getElementById('dot'+i).className = 'dot' + (S.lane === i ? ' active' : '');
+});
+
+document.getElementById('start-btn').addEventListener('click', startGame);
+
+function animate() {
+    requestAnimationFrame(animate);
+    update();
+    renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+</script>
+</body>
+</html>
