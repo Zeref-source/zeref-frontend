@@ -6,13 +6,16 @@ import { useGameStore } from './useGameStore'
 import Player from './Player'
 import World from './World'
 import UI from './UI/Overlay'
+import AudioController from './AudioController'
 
 export default function GameContainer() {
   const status = useGameStore((state) => state.status)
 
   return (
     <div style={{ width: '100%', height: '100%', background: '#050308' }}>
+      <AudioController />
       <Canvas shadows dpr={[1, 2]}>
+
         <PerspectiveCamera makeDefault position={[0, 6, 12]} fov={45} />
         
         {/* --- LIGHTING --- */}

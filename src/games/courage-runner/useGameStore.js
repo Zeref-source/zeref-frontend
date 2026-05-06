@@ -7,9 +7,11 @@ export const useGameStore = create((set) => ({
   speed: 10,
   health: 3,
   playerX: 0,
+  isMuted: false,
   
   startGame: () => set({ status: 'PLAYING', score: 0, speed: 10, health: 3, playerX: 0 }),
   setPlayerX: (x) => set({ playerX: x }),
+  toggleMute: () => set((state) => ({ isMuted: !state.isMuted })),
   endGame: () => set((state) => ({ 
     status: 'GAME_OVER', 
     highScore: Math.max(state.highScore, state.score) 
@@ -23,4 +25,5 @@ export const useGameStore = create((set) => ({
   }),
   reset: () => set({ status: 'START', score: 0, speed: 10, health: 3, playerX: 0 }),
 }))
+
 

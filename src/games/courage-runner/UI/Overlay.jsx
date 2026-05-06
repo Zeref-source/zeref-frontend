@@ -3,7 +3,7 @@ import { useGameStore } from '../useGameStore'
 import Leaderboard from './Leaderboard'
 
 export default function Overlay() {
-  const { status, score, health, startGame, reset } = useGameStore()
+  const { status, score, health, isMuted, startGame, reset, toggleMute } = useGameStore()
 
   return (
     <div style={{
@@ -16,15 +16,28 @@ export default function Overlay() {
       color: 'white'
     }}>
       
+      {/* Audio Toggle */}
+      <button 
+        onClick={toggleMute}
+        style={{
+          position: 'absolute', top: '20px', left: '20px', background: 'rgba(0,0,0,0.5)', border: '1px solid #ff6b2b',
+          borderRadius: '50%', width: '44px', height: '44px', cursor: 'pointer', pointerEvents: 'auto',
+          fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}
+        title={isMuted ? "Unmute" : "Mute"}
+      >
+        {isMuted ? '🔇' : '🔊'}
+      </button>
+
       {/* HUD */}
       {status === 'PLAYING' && (
-        <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ padding: '20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
           <div style={{ background: 'rgba(0,0,0,0.5)', padding: '10px 20px', borderRadius: '12px', border: '1px solid #ff6b2b' }}>
             <div style={{ fontSize: '12px', color: '#ff6b2b', fontWeight: 800 }}>SCORE</div>
             <div style={{ fontSize: '24px', fontWeight: 900 }}>{Math.floor(score)}</div>
           </div>
           
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginLeft: '20px' }}>
             {Array.from({ length: 3 }).map((_, i) => (
               <span key={i} style={{ fontSize: '24px', filter: i >= health ? 'grayscale(1) opacity(0.3)' : 'none' }}>
                 💖
