@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Courage Runs 3D - RealityDive</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        canvas { display: block; width: 100vw; height: 100vh; }
+        #hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; color: white; }
+        .creep { font-family: 'Creepster', cursive; text-shadow: 2px 2px 10px #4b0082; }
+        .score-box { position: absolute; top: 20px; left: 20px; font-size: 32px; }
+        .high-score { position: absolute; top: 20px; right: 20px; font-size: 24px; text-align: right; }
+        .lives { position: absolute; top: 60px; left: 20px; display: flex; gap: 5px; }
+        .heart { width: 30px; height: 30px; fill: #ff69b4; transition: opacity 0.3s; }
+        .heart.lost { opacity: 0.2; }
+        .powerup-bar { position: absolute; top: 100px; left: 20px; width: 150px; height: 10px; background: rgba(255,255,255,0.2); border-radius: 5px; overflow: hidden; display: none; }
+        #powerup-fill { width: 100%; height: 100%; background: #0ff; }
+        #mute-btn { position: absolute; top: 60px; right: 20px; pointer-events: auto; cursor: pointer; font-size: 30px; }
+        .lane-indicator { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; }
+        .dot { width: 12px; height: 12px; background: rgba(255,255,255,0.3); border-radius: 50%; }
+        .dot.active { background: #ff69b4; box-shadow: 0 0 10px #ff69b4; }
+        #screen { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: auto; }
+        #screen h1 { font-size: 80px; margin: 0; color: #ff69b4; text-align: center; }
+        #screen p { font-size: 24px; margin: 20px 0; }
+        .btn { padding: 15px 40px; font-size: 24px; background: #3d2b1f; color: #ff69b4; border: 2px solid #ff69b4; border-radius: 8px; cursor: pointer; pointer-events: auto; }
+        .btn:hover { background: #ff69b4; color: #3d2b1f; }
+        #toast { position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); font-size: 40px; color: #ff6b2b; opacity: 0; transition: opacity 0.5s; }
+    </style>
+</head>
+<body>
+
+<canvas id="game"></canvas>
+
+<div id="hud">
+    <div class="score-box creep">SCORE: <span id="score">0</span></div>
+    <div class="high-score creep">HIGH SCORE: <span id="high">0</span></div>
+    <div class="lives" id="lives-container"></div>
+    <div class="powerup-bar" id="pbar"><div id="powerup-fill"></div></div>
+    <div id="mute-btn">🔊</div>
+    <div class="lane-indicator">
+        <div class="dot" id="dot0"></div>
+        <div class="dot active" id="dot1"></div>
+        <div class="dot" id="dot2"></div>
+    </div>
+    <div id="toast" class="creep"></div>
+
+    <div id="screen">
+        <h1 id="screen-title" class="creep">COURAGE RUNS!</h1>
+        <p id="screen-sub">Avoid the horrors of the farm.</p>
+        <button id="start-btn" class="btn creep">LETS GO!</button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+/**
+ * COURAGE RUNS 3D
+ * -----------------------------------------
+ */
+
+// --- 1. CONFIG ---
+const CFG = {
+    LANES: [-4, 0, 4],
+    JUMP_DUR: 600,
+    SLIDE_DUR: 500,
+    BASE_SPEED: 0.5,
+    GRAVITY: 0.015,
+    LIVES: 3,
+    COLORS: {
+        PINK: 0xFF69B4,
+        DARK_PINK: 0xD81B60,
+        SKY_TOP: 0x0a0030,
+        SKY_BOTTOM: 0x1a0030,
+        FOG: 0x1a0030,
+        GROUND: 0x2a1a0a
+    }
+};
+
+// --- 2. THREE SETUP ---
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('game'), antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+scene.fog = new THREE.FogExp2(CFG.COLORS.FOG, 0.018);
+
+const ambientLight = new THREE.AmbientLight(0x1a0a2e, 0.6);
+scene.add(ambientLight);
+
+const moonlight = new THREE.DirectionalLight(0xb0a0ff, 0.8);
+moonlight.position.set(10, 20, 10);
+moonlight.castShadow = true;
+moonlight.shadow.mapSize.width = 2048;
+moonlight.shadow.mapSize.height = 2048;
+moonlight.shadow.camera.left = -20;
+moonlight.shadow.camera.right = 20;
+moonlight.shadow.camera.top = 20;
+moonlight.shadow.camera.bottom = -20;
+scene.add(moonlight);
+
+// --- 3. WORLD ---
+const groundGeo = new THREE.PlaneGeometry(100, 1000);
+const groundMat = new THREE.MeshPhongMaterial({ color: CFG.COLORS.GROUND });
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// Sky
+const skyGeo = new THREE.SphereGeometry(500, 32, 32);
+const skyMat = new THREE.MeshBasicMaterial({ color: CFG.COLORS.SKY_TOP, side: THREE.BackSide });
+const sky = new THREE.Mesh(skyGeo, skyMat);
+scene.add(sky);
+
+// Farmhouse silhouette
+const house = new THREE.Group();
+const body = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 10), new THREE.MeshBasicMaterial({ color: 0x000000 }));
+const roof = new THREE.Mesh(new THREE.ConeGeometry(8, 6, 4), new THREE.MeshBasicMaterial({ color: 0x000000 }));
+roof.position.y = 8;
+roof.rotation.y = Math.PI / 4;
+house.add(body, roof);
+house.position.set(20, 0, -400);
+scene.add(house);
+
+// Trees & Lampposts
+const trees = [];
+const lamps = [];
+for(let i=0; i<30; i++) {
+    const tree = new THREE.Group();
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.4, 6), new THREE.MeshBasicMaterial({ color: 0x000000 }));
+    tree.add(trunk);
+    tree.position.set(i % 2 === 0 ? -12 : 12, 3, -i * 30);
+    scene.add(tree);
+    trees.push(tree);
+
+    if (i % 3 === 0) {
+        const lamp = new THREE.Group();
+        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 8), new THREE.MeshBasicMaterial({ color: 0x111111 }));
+        const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.3), new THREE.MeshBasicMaterial({ color: 0xffdd88 }));
+        bulb.position.y = 4;
+        const pLight = new THREE.PointLight(0xffdd88, 1, 20);
+        pLight.position.y = 4;
+        lamp.add(pole, bulb, pLight);
+        lamp.position.set(i % 2 === 0 ? -8 : 8, 4, -i * 30 - 15);
+        scene.add(lamp);
+        lamps.push({ mesh: lamp, light: pLight });
+    }
+}
+
+// --- 4. COURAGE ---
+function createCourage() {
+    const courage = new THREE.Group();
+    const mat = new THREE.MeshToonMaterial({ color: CFG.COLORS.PINK });
+    const whiteMat = new THREE.MeshToonMaterial({ color: 0xffffff });
+    const blackMat = new THREE.MeshToonMaterial({ color: 0x000000 });
+
+    const body = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 16), mat);
+    body.scale.y = 0.85;
+    courage.add(body);
+
+    const head = new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 16), mat);
+    head.position.y = 1.2;
+    courage.add(head);
+
+    const earL = new THREE.Mesh(new THREE.ConeGeometry(0.3, 1.5, 8), new THREE.MeshToonMaterial({ color: CFG.COLORS.DARK_PINK }));
+    earL.position.set(-0.8, 1.8, 0);
+    earL.rotation.z = Math.PI / 4;
+    const earR = earL.clone();
+    earR.position.x = 0.8;
+    earR.rotation.z = -Math.PI / 4;
+    courage.add(earL, earR);
+
+    const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.4, 8, 8), whiteMat);
+    eyeL.position.set(-0.4, 1.5, 0.9);
+    const eyeR = eyeL.clone();
+    eyeR.position.x = 0.4;
+    const pupilL = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), blackMat);
+    pupilL.position.set(-0.4, 1.5, 1.25);
+    const pupilR = pupilL.clone();
+    pupilR.position.x = 0.4;
+    courage.add(eyeL, eyeR, pupilL, pupilR);
+
+    const nose = new THREE.Mesh(new THREE.SphereGeometry(0.15), blackMat);
+    nose.position.set(0, 1.2, 1.3);
+    courage.add(nose);
+
+    const legs = [];
+    for(let i=0; i<4; i++) {
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.6), mat);
+        leg.position.set(i < 2 ? -0.5 : 0.5, -0.8, i % 2 === 0 ? 0.4 : -0.4);
+        courage.add(leg);
+        legs.push(leg);
+    }
+
+    courage.traverse(o => { if(o.isMesh) { o.castShadow = true; o.receiveShadow = true; }});
+    return { mesh: courage, legs, pupils: [pupilL, pupilR], ears: [earL, earR] };
+}
+
+const courage = createCourage();
+scene.add(courage.mesh);
+
+const shadow = new THREE.Mesh(new THREE.CircleGeometry(1, 32), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.4 }));
+shadow.rotation.x = -Math.PI / 2;
+shadow.position.y = 0.01;
+scene.add(shadow);
+
+// --- 5. OBSTACLES & 6. COLLECTIBLES ---
+const obstaclePool = [];
+const collectiblePool = [];
+
+function createObstacle(type) {
+    const group = new THREE.Group();
+    let mesh;
+    if (type === 'KATZ') {
+        mesh = new THREE.Mesh(new THREE.BoxGeometry(2, 6, 1), new THREE.MeshToonMaterial({ color: 0x880000 }));
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.8), new THREE.MeshToonMaterial({ color: 0x880000 }));
+        head.position.y = 3.5;
+        group.add(mesh, head);
+    } else if (type === 'LE_QUACK') {
+        mesh = new THREE.Mesh(new THREE.SphereGeometry(1), new THREE.MeshToonMaterial({ color: 0xffffff }));
+        const hat = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.8), new THREE.MeshToonMaterial({ color: 0x222222 }));
+        hat.position.y = 1;
+        group.add(mesh, hat);
+        group.position.y = 3;
+    } else {
+        mesh = new THREE.Mesh(new THREE.BoxGeometry(3, 2, 3), new THREE.MeshToonMaterial({ color: 0x5d4037 }));
+        group.add(mesh);
+    }
+    group.visible = false;
+    scene.add(group);
+    return { mesh: group, type, active: false };
+}
+
+for(let i=0; i<15; i++) obstaclePool.push(createObstacle(['KATZ', 'LE_QUACK', 'BOX'][i % 3]));
+
+function createCookie() {
+    const mesh = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.2, 8, 16), new THREE.MeshPhongMaterial({ color: 0xd4af37, emissive: 0xd4af37, emissiveIntensity: 0.5 }));
+    mesh.visible = false;
+    scene.add(mesh);
+    return { mesh, active: false };
+}
+for(let i=0; i<30; i++) collectiblePool.push(createCookie());
+
+// --- 9. AUDIO ---
+let audioCtx;
+const sounds = {};
+function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    sounds.jump = () => {
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.15);
+        g.gain.setTargetAtTime(0, audioCtx.currentTime, 0.1);
+        osc.connect(g); g.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+    };
+
+    sounds.hit = () => {
+        const osc = audioCtx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(80, audioCtx.currentTime + 0.3);
+        const g = audioCtx.createGain();
+        g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+        osc.connect(g); g.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+    };
+
+    sounds.collect = () => {
+        [523.25, 659.25, 783.99].forEach((f, i) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.frequency.value = f;
+            g.gain.setValueAtTime(0.1, audioCtx.currentTime + i * 0.1);
+            g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.1 + 0.1);
+            o.connect(g); g.connect(audioCtx.destination);
+            o.start(audioCtx.currentTime + i * 0.1); o.stop(audioCtx.currentTime + i * 0.1 + 0.1);
+        });
+    };
+}
+
+// --- 12. GAME STATES ---
+let state = 'TITLE';
+let score = 0;
+let highScore = localStorage.getItem('courage_3d_high') || 0;
+let lives = CFG.LIVES;
+let speed = CFG.BASE_SPEED;
+let lane = 1;
+let targetX = 0;
+let jumping = false;
+let jumpTime = 0;
+let sliding = false;
+let slideTime = 0;
+let invincible = 0;
+
+function updateHUD() {
+    document.getElementById('score').innerText = Math.floor(score);
+    document.getElementById('high').innerText = Math.floor(highScore);
+    const container = document.getElementById('lives-container');
+    container.innerHTML = '';
+    for(let i=0; i<CFG.LIVES; i++) {
+        container.innerHTML += `<svg class="heart ${i >= lives ? 'lost' : ''}" viewBox="0 0 32 32"><path d="M16 28.267c-.667 0-1.333-.333-1.867-1-1.333-1.6-4.667-4.4-6.8-6.133-3.2-2.667-5.333-5.2-5.333-8.267 0-4.133 3.333-7.467 7.467-7.467 2.4 0 4.533 1.2 6.533 3.2 2-2 4.133-3.2 6.533-3.2 4.133 0 7.467 3.333 7.467 7.467 0 3.067-2.133 5.6-5.333 8.267-2.133 1.733-5.467 4.533-6.8 6.133-.533.667-1.2 1-1.867 1z"/></svg>`;
+    }
+}
+updateHUD();
+
+function startGame() {
+    initAudio();
+    state = 'PLAYING';
+    score = 0; lives = CFG.LIVES; speed = CFG.BASE_SPEED;
+    document.getElementById('screen').style.display = 'none';
+    updateHUD();
+}
+
+function gameOver() {
+    state = 'GAME_OVER';
+    document.getElementById('screen').style.display = 'flex';
+    document.getElementById('screen-title').innerText = 'STUPID DOG!';
+    document.getElementById('screen-sub').innerText = `Final Score: ${Math.floor(score)}`;
+    document.getElementById('start-btn').innerText = 'RUN AGAIN';
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('courage_3d_high', highScore);
+    }
+}
+
+// --- 13. UPDATE LOOP ---
+function spawn() {
+    if (state !== 'PLAYING') return;
+    if (Math.random() < 0.02) {
+        const o = obstaclePool.find(x => !x.active);
+        if (o) {
+            o.active = true;
+            o.mesh.visible = true;
+            o.mesh.position.set(CFG.LANES[Math.floor(Math.random() * 3)], 0, -300);
+        }
+    }
+    if (Math.random() < 0.05) {
+        const c = collectiblePool.find(x => !x.active);
+        if (c) {
+            c.active = true;
+            c.mesh.visible = true;
+            c.mesh.position.set(CFG.LANES[Math.floor(Math.random() * 3)], 1, -300);
+        }
+    }
+}
+
+function update(dt) {
+    if (state === 'PLAYING') {
+        score += speed;
+        speed = Math.min(2, CFG.BASE_SPEED + score / 2000);
+        
+        // Player lerp
+        targetX = CFG.LANES[lane];
+        courage.mesh.position.x = THREE.MathUtils.lerp(courage.mesh.position.x, targetX, 0.1);
+        
+        // Jump
+        if (jumping) {
+            const elapsed = Date.now() - jumpTime;
+            const t = elapsed / CFG.JUMP_DUR;
+            if (t >= 1) { jumping = false; courage.mesh.position.y = 0; }
+            else courage.mesh.position.y = Math.sin(t * Math.PI) * 4;
+        }
+
+        // Slide
+        if (sliding) {
+            const elapsed = Date.now() - slideTime;
+            if (elapsed > CFG.SLIDE_DUR) { sliding = false; courage.mesh.scale.y = 1; courage.mesh.position.y = 0; }
+            else { courage.mesh.scale.y = 0.4; courage.mesh.position.y = -0.5; }
+        }
+
+        // Anim
+        const t = Date.now() * 0.01 * speed;
+        courage.legs.forEach((l, i) => {
+            l.rotation.x = Math.sin(t + (i % 2) * Math.PI) * 0.8;
+        });
+        courage.mesh.rotation.z = Math.sin(t) * 0.05;
+        shadow.position.x = courage.mesh.position.x;
+        shadow.scale.setScalar(1 - courage.mesh.position.y * 0.15);
+
+        // Camera
+        camera.position.x = THREE.MathUtils.lerp(camera.position.x, courage.mesh.position.x * 0.5, 0.05);
+        camera.position.y = 6 + courage.mesh.position.y * 0.2;
+        camera.lookAt(courage.mesh.position.x, 2, courage.mesh.position.z - 5);
+
+        // World scroll
+        trees.forEach(t => {
+            t.position.z += speed * 10;
+            if (t.position.z > 20) t.position.z -= 900;
+        });
+        lamps.forEach(l => {
+            l.mesh.position.z += speed * 10;
+            if (l.mesh.position.z > 20) l.mesh.position.z -= 900;
+            l.light.intensity = 0.8 + Math.sin(Date.now() * 0.01) * 0.4;
+        });
+
+        // Obstacles
+        obstaclePool.forEach(o => {
+            if (!o.active) return;
+            o.mesh.position.z += speed * 10;
+            if (o.mesh.position.z > 20) { o.active = false; o.mesh.visible = false; }
+            
+            // Collision
+            const dist = courage.mesh.position.distanceTo(o.mesh.position);
+            if (dist < 2 && invincible <= 0) {
+                if (o.type === 'LE_QUACK' && sliding) return;
+                lives--;
+                invincible = 120;
+                sounds.hit();
+                updateHUD();
+                if (lives <= 0) gameOver();
+            }
+        });
+
+        // Collectibles
+        collectiblePool.forEach(c => {
+            if (!c.active) return;
+            c.mesh.position.z += speed * 10;
+            c.mesh.rotation.y += 0.05;
+            if (c.mesh.position.z > 20) { c.active = false; c.mesh.visible = false; }
+            
+            if (courage.mesh.position.distanceTo(c.mesh.position) < 2) {
+                c.active = false; c.mesh.visible = false;
+                score += 100;
+                sounds.collect();
+                updateHUD();
+            }
+        });
+
+        if (invincible > 0) {
+            invincible--;
+            courage.mesh.visible = Math.floor(Date.now() / 100) % 2 === 0;
+        } else courage.mesh.visible = true;
+
+        spawn();
+        updateHUD();
+    }
+}
+
+// --- 10. INPUT ---
+window.addEventListener('keydown', e => {
+    if (state !== 'PLAYING') return;
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') { if(lane > 0) lane--; }
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') { if(lane < 2) lane++; }
+    if ((e.code === 'ArrowUp' || e.code === 'KeyW' || e.code === 'Space') && !jumping) { jumping = true; jumpTime = Date.now(); sounds.jump(); }
+    if ((e.code === 'ArrowDown' || e.code === 'KeyS') && !jumping) { sliding = true; slideTime = Date.now(); }
+    
+    for(let i=0; i<3; i++) document.getElementById('dot'+i).className = 'dot' + (lane === i ? ' active' : '');
+});
+
+document.getElementById('start-btn').addEventListener('click', startGame);
+document.getElementById('mute-btn').addEventListener('click', () => {
+    // Basic mute toggle logic
+});
+
+// --- 14. RENDER LOOP ---
+function animate() {
+    requestAnimationFrame(animate);
+    update();
+    renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+</script>
+</body>
+</html>
