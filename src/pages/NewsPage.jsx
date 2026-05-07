@@ -9,7 +9,7 @@ const SOURCE_MAP = {
   Anime: ['Anime News Network', 'Crunchyroll'],
   Hardware: ["Tom's Hardware", 'The Verge', 'Wccftech', 'Digital Trends', 'AnandTech'],
   Geopolitics: ['BBC World', 'Al Jazeera', 'France 24', 'DW World', 'Foreign Policy', 'The Guardian', 'The Hindu'],
-  India: ['NDTV India', 'Hindustan Times', 'The Hindu National', 'Indian Express', 'Mint News'],
+  India: ['NDTV India', 'The Hindu National', 'Indian Express', 'India Today', 'The Hindu Sci-Tech', 'Scroll.in', 'YourStory'],
   Movies: ['IGN Movies', 'Variety', 'The Hollywood Reporter', 'Deadline', 'Collider', 'Screen Rant'],
   Finance: ['Moneycontrol', 'Economic Times', 'LiveMint', 'Business Line', 'NDTV Profit'],
 }
@@ -53,12 +53,12 @@ const CONFIG = {
   },
   India: {
     title: 'INDIA',
-    titleHighlight: 'NEWS',
-    subtitle: 'Everything happening inside India — financial, political, humanitarian, and daily events. Pure news, no noise.',
-    emoji: '🇮🇳',
-    placeholder: 'Search national news, politics, finance...',
+    titleHighlight: 'RISING',
+    subtitle: 'Ground news, tech breakthroughs, space missions, governance decisions & the story of where India is heading',
+    emoji: '🚀',
+    placeholder: 'Search ISRO, projects, policy, startups, infrastructure...',
     fallbackEmoji: '🇮🇳',
-    infoNote: 'Clean feed from top national outlets. No propaganda, just pure reporting.',
+    infoNote: 'Covers ground news, science & tech advancement, government projects, and innovation — financial market news is in the Finance tab.',
   },
   Finance: {
     title: 'INDIAN FINANCIAL',
