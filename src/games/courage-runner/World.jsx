@@ -1,17 +1,15 @@
 import React, { useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGameStore } from './useGameStore'
-import { SpookyTree, Fence } from './Assets'
+import { SpookyTree, Gravestone, Lantern, Scarecrow, OldBarn, Rock, BrokenWagon, Windmill, Fence } from './Assets'
 import { playerRef } from './gameState'
 
 const LANES = [-4, 0, 4]
 const CHUNK_SIZE = 90
-const POOL = 5
-const POOL_COINS = 36
+const POOL = 6
+const POOL_COINS = 40
 
-// ─── Pooled mesh components ──────────────────────────────────────────────────
-// All use meshLambertMaterial (no PBR, no specular/roughness calculations).
-// No castShadow/receiveShadow — eliminates the shadow render pass entirely.
+// ─── Pooled obstacle meshes ───────────────────────────────────────────────────
 
 const LowBarrierMesh = React.forwardRef((_, ref) => (
   <group ref={ref} visible={false}>
@@ -83,29 +81,103 @@ const CoinMeshItem = React.forwardRef((_, ref) => (
   </group>
 ))
 
-// ─── Static floor chunk ───────────────────────────────────────────────────────
+// ─── Floor chunks — 3 variants so recycled chunks look different ──────────────
 
-function FloorChunk() {
+function FloorChunk({ variant }) {
   return (
     <>
+      {/* Ground */}
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[120, CHUNK_SIZE]} />
-        <meshLambertMaterial color="#1a0f2a" />
+        <planeGeometry args={[140, CHUNK_SIZE]} />
+        <meshLambertMaterial color="#140c20" />
       </mesh>
+      {/* Running path */}
       <mesh position={[0, 0.01, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[14, CHUNK_SIZE]} />
-        <meshLambertMaterial color="#120828" />
+        <meshLambertMaterial color="#0e0618" />
       </mesh>
+      {/* Lane divider strips */}
       {[-2, 2].map((x, i) => (
         <mesh key={i} position={[x, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[0.1, CHUNK_SIZE]} />
-          <meshLambertMaterial color="#5a2a8a" emissive="#3a1060" />
+          <planeGeometry args={[0.12, CHUNK_SIZE]} />
+          <meshLambertMaterial color="#6030a0" emissive="#3a1060" />
         </mesh>
       ))}
-      <SpookyTree position={[-16, 0, -CHUNK_SIZE * 0.3]} />
-      <SpookyTree position={[18, 0, CHUNK_SIZE * 0.1]} />
-      <Fence position={[-7.5, 0, -CHUNK_SIZE / 4]} />
-      <Fence position={[7.5, 0, -CHUNK_SIZE / 4]} />
+
+      {/* ── Left-side scenery ─────────────────────────── */}
+      {variant === 0 && <>
+        <SpookyTree position={[-14, 0, -30]} scale={1.2} />
+        <SpookyTree position={[-18, 0, 10]} />
+        <SpookyTree position={[-12, 0, 35]} scale={0.8} />
+        <Gravestone position={[-10, 0, -5]} rotation={[0, 0.3, 0]} />
+        <Gravestone position={[-11, 0, 2]} rotation={[0, -0.2, 0]} />
+        <Lantern position={[-8, 0, -20]} />
+        <Lantern position={[-8, 0, 15]} />
+        <Scarecrow position={[-22, 0, 20]} />
+        <Rock position={[-9, 0, 25]} scale={1.2} />
+        <Rock position={[-10, 0, 28]} scale={0.7} />
+        <Fence position={[-7.5, 0, -40]} length={4} />
+      </>}
+
+      {variant === 1 && <>
+        <OldBarn position={[-28, 0, 5]} />
+        <SpookyTree position={[-15, 0, -15]} scale={1.4} />
+        <SpookyTree position={[-20, 0, 30]} />
+        <Lantern position={[-8, 0, -5]} />
+        <Lantern position={[-8, 0, 30]} />
+        <BrokenWagon position={[-11, 0, 15]} />
+        <Rock position={[-9, 0, -25]} />
+        <Gravestone position={[-10, 0, 20]} />
+        <Gravestone position={[-11.5, 0, 24]} rotation={[0, 0.5, 0]} />
+        <Gravestone position={[-9.5, 0, 28]} rotation={[0, -0.3, 0]} />
+        <Fence position={[-7.5, 0, 0]} length={3} />
+      </>}
+
+      {variant === 2 && <>
+        <Windmill position={[-30, 0, -10]} />
+        <SpookyTree position={[-14, 0, 20]} />
+        <SpookyTree position={[-19, 0, -25]} scale={1.1} />
+        <Scarecrow position={[-13, 0, -5]} />
+        <Lantern position={[-8, 0, 10]} />
+        <Rock position={[-10, 0, -10]} scale={1.5} />
+        <Rock position={[-12, 0, -6]} scale={0.8} />
+        <Gravestone position={[-10, 0, 35]} />
+        <Fence position={[-7.5, 0, 10]} length={5} />
+      </>}
+
+      {/* ── Right-side scenery ────────────────────────── */}
+      {variant === 0 && <>
+        <SpookyTree position={[16, 0, 0]} scale={1.1} />
+        <SpookyTree position={[20, 0, -25]} />
+        <OldBarn position={[26, 0, 15]} />
+        <Lantern position={[9, 0, -10]} />
+        <Lantern position={[9, 0, 30]} />
+        <Rock position={[10, 0, 10]} />
+        <Gravestone position={[10, 0, -20]} />
+        <Fence position={[7.5, 0, -35]} length={4} />
+      </>}
+
+      {variant === 1 && <>
+        <SpookyTree position={[15, 0, 10]} />
+        <SpookyTree position={[22, 0, -20]} scale={1.3} />
+        <Scarecrow position={[14, 0, 25]} />
+        <Lantern position={[9, 0, 0]} />
+        <Lantern position={[9, 0, -30]} />
+        <BrokenWagon position={[12, 0, -10]} />
+        <Rock position={[11, 0, 20]} scale={1.1} />
+        <Fence position={[7.5, 0, 5]} length={3} />
+      </>}
+
+      {variant === 2 && <>
+        <SpookyTree position={[17, 0, -10]} scale={0.9} />
+        <SpookyTree position={[14, 0, 30]} />
+        <OldBarn position={[30, 0, -20]} />
+        <Lantern position={[9, 0, 15]} />
+        <Gravestone position={[11, 0, 5]} />
+        <Gravestone position={[12, 0, 10]} rotation={[0, 0.4, 0]} />
+        <Rock position={[10, 0, -15]} scale={1.3} />
+        <Fence position={[7.5, 0, -20]} length={5} />
+      </>}
     </>
   )
 }
@@ -123,23 +195,22 @@ export default function World() {
   const trainRefs = useRef(Array.from({ length: POOL }, () => React.createRef()))
   const coinRefs  = useRef(Array.from({ length: POOL_COINS }, () => React.createRef()))
 
-  const chunkZ = useRef([0, -CHUNK_SIZE, -CHUNK_SIZE * 2])
-  const obs = useRef({
+  const chunkZ       = useRef([0, -CHUNK_SIZE, -CHUNK_SIZE * 2])
+  const obs          = useRef({
     low:   Array.from({ length: POOL }, () => ({ active: false, lane: 1, z: -300 })),
     high:  Array.from({ length: POOL }, () => ({ active: false, lane: 1, z: -300 })),
     train: Array.from({ length: POOL }, () => ({ active: false, lane: 1, z: -300 })),
   })
-  const coins = useRef(Array.from({ length: POOL_COINS }, () => ({ active: false, x: 0, baseY: 1.2, z: -300 })))
-  const lastSpawn      = useRef(0)
-  const distTraveled   = useRef(0)
-  const lastSpeedInc   = useRef(0)
-  const hitCooldown    = useRef(0)
-  const scoreAccum     = useRef(0)
-  const distAccum      = useRef(0)
-  const lastFlush      = useRef(0)
+  const coins        = useRef(Array.from({ length: POOL_COINS }, () => ({ active: false, x: 0, baseY: 1.2, z: -300 })))
+  const lastSpawn    = useRef(0)
+  const distTraveled = useRef(0)
+  const lastSpeedInc = useRef(0)
+  const hitCooldown  = useRef(0)
+  const scoreAccum   = useRef(0)
+  const distAccum    = useRef(0)
+  const lastFlush    = useRef(0)
 
-  useEffect(() => {
-    if (status !== 'PLAYING') return
+  const resetPools = () => {
     chunkZ.current = [0, -CHUNK_SIZE, -CHUNK_SIZE * 2]
     ;['low', 'high', 'train'].forEach(t =>
       obs.current[t].forEach(o => { o.active = false; o.z = -300 })
@@ -151,23 +222,44 @@ export default function World() {
     coinRefs.current.forEach(r => { if (r.current) r.current.visible = false })
     lastSpawn.current = 0; distTraveled.current = 0; lastSpeedInc.current = 0
     hitCooldown.current = 0; scoreAccum.current = 0; distAccum.current = 0; lastFlush.current = 0
-  }, [status])
+  }
+
+  useEffect(() => { if (status === 'PLAYING') resetPools() }, [status])
+
+  // Spawn one obstacle of given type+lane. Returns true if slot found.
+  const spawnObs = (type, lane, zOffset = 0) => {
+    const pool = obs.current[type]
+    const slot = pool.findIndex(o => !o.active)
+    if (slot === -1) return false
+    pool[slot].active = true; pool[slot].lane = lane; pool[slot].z = -145 + zOffset
+    return true
+  }
+
+  // Spawn coins in a lane starting at baseZ
+  const spawnCoins = (lane, count = 5) => {
+    const cx = LANES[lane]
+    let spawned = 0
+    for (let i = 0; i < POOL_COINS && spawned < count; i++) {
+      const c = coins.current[i]
+      if (!c.active) { c.active = true; c.x = cx; c.baseY = 1.2; c.z = -115 - spawned * 3.5; spawned++ }
+    }
+  }
 
   useFrame((state, delta) => {
     if (statusRef.current !== 'PLAYING') return
 
-    const dt = Math.min(delta, 0.05)
+    const dt    = Math.min(delta, 0.05)
     const speed = useGameStore.getState().speed
     const elapsed = state.clock.elapsedTime
 
-    // Chunks
+    // ── Chunks ────────────────────────────────────────────────────────────────
     for (let i = 0; i < 3; i++) {
       chunkZ.current[i] += speed * dt
       if (chunkZ.current[i] > CHUNK_SIZE * 0.5) chunkZ.current[i] -= CHUNK_SIZE * 3
       if (chunkRefs[i].current) chunkRefs[i].current.position.z = chunkZ.current[i]
     }
 
-    // Accumulate score/distance, flush every 0.4s
+    // ── Score / distance ──────────────────────────────────────────────────────
     const dist = speed * dt
     distTraveled.current += dist
     scoreAccum.current   += dist * 0.5
@@ -179,35 +271,53 @@ export default function World() {
       scoreAccum.current = 0; distAccum.current = 0; lastFlush.current = elapsed
     }
 
-    // Speed ramp
-    if (distTraveled.current - lastSpeedInc.current > 80) {
+    // Speed ramp — every 50 units (+2.5 each time, max 90)
+    if (distTraveled.current - lastSpeedInc.current > 50) {
       useGameStore.getState().incrementSpeed()
       lastSpeedInc.current = distTraveled.current
     }
 
-    // Spawn
-    const spawnInterval = Math.max(1.5, 5 / (speed / 10))
+    // ── Spawn ─────────────────────────────────────────────────────────────────
+    // Interval shrinks aggressively: starts at 2.2s, hits 0.65s at max speed
+    const spawnInterval = Math.max(0.65, 2.2 / (speed / 20))
     if (elapsed - lastSpawn.current > spawnInterval) {
       lastSpawn.current = elapsed
-      const types = ['low', 'high', 'train']
-      const type = types[Math.floor(Math.random() * types.length)]
-      const lane = Math.floor(Math.random() * 3)
-      const pool = obs.current[type]
-      const slot = pool.findIndex(o => !o.active)
-      if (slot !== -1) { pool[slot].active = true; pool[slot].lane = lane; pool[slot].z = -140 }
 
-      const coinLane = (lane + 1 + Math.floor(Math.random() * 2)) % 3
-      const cx = LANES[coinLane]
-      let spawned = 0
-      for (let i = 0; i < POOL_COINS && spawned < 5; i++) {
-        const c = coins.current[i]
-        if (!c.active) { c.active = true; c.x = cx; c.baseY = 1.2; c.z = -120 - spawned * 3.2; spawned++ }
+      const types = ['low', 'high', 'train']
+      const roll  = Math.random()
+
+      if (roll < 0.35 && speed > 30) {
+        // ── Double-block wave: 2 lanes blocked, 1 safe ───────────────────────
+        // Player MUST be in the correct lane — highly reactive!
+        const freeLane  = Math.floor(Math.random() * 3)
+        const blocked   = [0, 1, 2].filter(l => l !== freeLane)
+        const t1 = types[Math.floor(Math.random() * types.length)]
+        const t2 = types[Math.floor(Math.random() * types.length)]
+        spawnObs(t1, blocked[0])
+        spawnObs(t2, blocked[1])
+        // Coins down the free lane as a reward
+        spawnCoins(freeLane, 4)
+      } else if (roll < 0.55 && speed > 45) {
+        // ── Staggered pair: same type, offset Z ──────────────────────────────
+        const lane1 = Math.floor(Math.random() * 3)
+        const lane2 = (lane1 + 1 + Math.floor(Math.random() * 2)) % 3
+        const t = types[Math.floor(Math.random() * types.length)]
+        spawnObs(t, lane1)
+        spawnObs(t, lane2, 18)  // second one slightly behind
+      } else {
+        // ── Single obstacle ──────────────────────────────────────────────────
+        const lane = Math.floor(Math.random() * 3)
+        const type = types[Math.floor(Math.random() * types.length)]
+        spawnObs(type, lane)
+        // Coins in an adjacent lane
+        const coinLane = (lane + 1 + Math.floor(Math.random() * 2)) % 3
+        spawnCoins(coinLane, Math.random() < 0.4 ? 3 : 5)
       }
     }
 
     if (hitCooldown.current > 0) hitCooldown.current -= dt
 
-    // Move obstacles + collision
+    // ── Move obstacles + collision ────────────────────────────────────────────
     const processObs = (pool, refs, hitFn) => {
       for (let i = 0; i < pool.length; i++) {
         const o = pool[i]
@@ -222,7 +332,7 @@ export default function World() {
           const dz = Math.abs(o.z), dx = Math.abs(LANES[o.lane] - playerRef.x)
           if (dz < 1.8 && dx < 1.6 && hitFn()) {
             o.active = false; mesh.visible = false
-            hitCooldown.current = 2.0
+            hitCooldown.current = 1.5
             useGameStore.getState().damage()
           }
         }
@@ -233,7 +343,7 @@ export default function World() {
     processObs(obs.current.high,  highRefs,  () => !playerRef.isSliding)
     processObs(obs.current.train, trainRefs, () => true)
 
-    // Move coins + collection
+    // ── Coins ─────────────────────────────────────────────────────────────────
     for (let i = 0; i < POOL_COINS; i++) {
       const c = coins.current[i]
       if (!c.active) continue
@@ -241,8 +351,8 @@ export default function World() {
       const mesh = coinRefs.current[i].current
       if (!mesh) continue
       if (c.z > 10) { c.active = false; mesh.visible = false; continue }
-      mesh.position.set(c.x, c.baseY + Math.sin(elapsed * 3 + c.x) * 0.1, c.z)
-      mesh.rotation.y += dt * 3
+      mesh.position.set(c.x, c.baseY + Math.sin(elapsed * 4 + c.x) * 0.12, c.z)
+      mesh.rotation.y += dt * 4
       mesh.visible = true
       if (Math.abs(c.z) < 1.2 && Math.abs(c.x - playerRef.x) < 1.5) {
         c.active = false; mesh.visible = false
@@ -253,9 +363,9 @@ export default function World() {
 
   return (
     <group>
-      <group ref={chunkRefs[0]}><FloorChunk /></group>
-      <group ref={chunkRefs[1]}><FloorChunk /></group>
-      <group ref={chunkRefs[2]}><FloorChunk /></group>
+      <group ref={chunkRefs[0]}><FloorChunk variant={0} /></group>
+      <group ref={chunkRefs[1]}><FloorChunk variant={1} /></group>
+      <group ref={chunkRefs[2]}><FloorChunk variant={2} /></group>
 
       {lowRefs.current.map((r, i)   => <LowBarrierMesh key={`lo${i}`} ref={r} />)}
       {highRefs.current.map((r, i)  => <HighGateMesh   key={`hi${i}`} ref={r} />)}

@@ -6,9 +6,9 @@ import * as THREE from 'three'
 
 const LANES = [-4, 0, 4]
 const BASE_Y = 1.0
-const JUMP_VEL = 12
-const GRAVITY = -28
-const SLIDE_DURATION = 0.8
+const JUMP_VEL = 13
+const GRAVITY = -32
+const SLIDE_DURATION = 0.7
 const PINK = '#e87ab0'
 const DARK_PINK = '#c05880'
 
@@ -158,7 +158,7 @@ export default function Player() {
     if (!g) return
     const dt = Math.min(delta, 0.05)
 
-    g.position.x = THREE.MathUtils.lerp(g.position.x, LANES[laneRef.current], 0.18)
+    g.position.x = THREE.MathUtils.lerp(g.position.x, LANES[laneRef.current], 0.24)
     g.rotation.z = THREE.MathUtils.lerp(g.rotation.z, (LANES[laneRef.current] - g.position.x) * -0.06, 0.15)
 
     if (isJumpingRef.current) {
