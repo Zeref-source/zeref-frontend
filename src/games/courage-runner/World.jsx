@@ -363,6 +363,17 @@ export default function World() {
 
   return (
     <group>
+      {/*
+        Static near-ground fill — never moves, always covers z=-20 to z+20.
+        The camera sits at z=11 so this permanently plugs the 1-2 frame gap
+        that appears at the bottom of the screen when a chunk recycles.
+        Sits at y=-0.005 so it never z-fights with the scrolling chunks.
+      */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.005, 0]}>
+        <planeGeometry args={[140, 40]} />
+        <meshLambertMaterial color="#140c20" />
+      </mesh>
+
       <group ref={chunkRefs[0]}><FloorChunk variant={0} /></group>
       <group ref={chunkRefs[1]}><FloorChunk variant={1} /></group>
       <group ref={chunkRefs[2]}><FloorChunk variant={2} /></group>
