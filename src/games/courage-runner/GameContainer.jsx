@@ -1,7 +1,7 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { PerspectiveCamera } from '@react-three/drei'
-import { useGameStore } from './useGameStore'
+import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { playerRef } from './gameState'
 import Player from './Player'
 import World from './World'
@@ -19,34 +19,56 @@ function CameraRig() {
   return null
 }
 
+// Moon follows camera so fog never obscures it; fog={false} skips the fog calc.
+function Moon() {
+  const meshRef = useRef()
+  const { camera } = useThree()
+  useFrame(() => {
+    if (meshRef.current) {
+      meshRef.current.position.set(
+        camera.position.x - 35,
+        camera.position.y + 52,
+        camera.position.z - 80
+      )
+    }
+  })
+  return (
+    <mesh ref={meshRef}>
+      <sphereGeometry args={[10, 16, 12]} />
+      <meshBasicMaterial color="#dde8ff" fog={false} />
+    </mesh>
+  )
+}
+
 export default function GameContainer() {
   return (
     <div style={{ width: '100%', height: '100%', background: '#050308' }}>
       <AudioController />
 
-      {/*
-        No shadows — saves an entire scene render pass per frame.
-        No post-processing — Bloom alone costs 5-8 extra passes.
-        dpr=1 — fixed pixel ratio, no high-DPI scaling.
-      */}
+      {/* dpr=1 + no antialias keeps GPU load low even with Bloom */}
       <Canvas dpr={1} gl={{ antialias: false, powerPreference: 'high-performance' }}>
         <PerspectiveCamera makeDefault position={[0, 5.5, 11]} fov={58} />
         <CameraRig />
 
-        {/* Boosted non-PBR lighting — Lambert materials only, no shadow maps */}
-        <ambientLight intensity={1.1} color="#8060c0" />
-        <directionalLight position={[-8, 18, 6]} intensity={2.5} color="#d0e4ff" />
-        <directionalLight position={[10, 12, 4]} intensity={1.0} color="#b070ff" />
+        {/* Moonlight direction matches moon position above-left */}
+        <ambientLight intensity={1.0} color="#7858b8" />
+        <directionalLight position={[-35, 55, -80]} intensity={2.0} color="#c8d8ff" />
+        <directionalLight position={[10, 12, 4]} intensity={0.7} color="#b070ff" />
         <hemisphereLight args={['#2a1060', '#180830', 0.7]} />
 
-        {/* Fog pushed back so side scenery stays visible longer */}
         <color attach="background" args={['#060210']} />
         <fog attach="fog" args={['#050308', 30, 105]} />
 
         <Suspense fallback={null}>
+          <Moon />
           <World />
           <Player />
         </Suspense>
+
+        {/* Bloom — single extra pass, only fires on bright emissive surfaces */}
+        <EffectComposer>
+          <Bloom intensity={1.1} luminanceThreshold={0.5} luminanceSmoothing={0.85} />
+        </EffectComposer>
       </Canvas>
 
       <UI />
