@@ -1,7 +1,6 @@
 import React, { Suspense, useRef } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { PerspectiveCamera } from '@react-three/drei'
-import { EffectComposer, Bloom } from '@react-three/postprocessing'
 import { playerRef } from './gameState'
 import Player from './Player'
 import World from './World'
@@ -65,10 +64,7 @@ export default function GameContainer() {
           <Player />
         </Suspense>
 
-        {/* Bloom — single extra pass, only fires on bright emissive surfaces */}
-        <EffectComposer>
-          <Bloom intensity={1.1} luminanceThreshold={0.5} luminanceSmoothing={0.85} />
-        </EffectComposer>
+
       </Canvas>
 
       <UI />
