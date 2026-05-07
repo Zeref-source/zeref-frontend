@@ -10,7 +10,7 @@ const SOURCE_MAP = {
   Anime: ['Anime News Network', 'Crunchyroll', 'Siliconera', 'Anime Corner', 'MyAnimeList', 'ComicBook Anime'],
   Hardware: ["Tom's Hardware", 'The Verge', 'Wccftech', 'Digital Trends', 'TechRadar', 'Engadget', 'ExtremeTech', 'HotHardware'],
   Geopolitics: ['BBC World', 'Al Jazeera', 'DW World', 'Foreign Policy', 'The Guardian World', 'The Hindu', 'Middle East Eye', 'OCCRP'],
-  India: ['NDTV India', 'The Hindu National', 'Indian Express', 'India Today', 'The Hindu Sci-Tech', 'Scroll.in', 'YourStory'],
+  India: ['NDTV India', 'The Hindu National', 'Indian Express', 'India Today', 'The Hindu Sci-Tech', 'Hindustan Times', 'YourStory'],
   Movies: ['IGN Movies', 'Variety', 'The Hollywood Reporter', 'Deadline', 'Collider', 'Screen Rant', 'IndieWire', 'The Wrap'],
   Finance: ['Moneycontrol', 'Economic Times', 'LiveMint', 'Business Line', 'NDTV Profit', 'Business Standard', 'CNBC TV18'],
 }
@@ -59,7 +59,7 @@ const CONFIG = {
     emoji: '🚀',
     placeholder: 'Search ISRO, projects, policy, startups, infrastructure...',
     fallbackEmoji: '🇮🇳',
-    infoNote: 'Covers ground news, science & tech advancement, government projects, and innovation — financial market news is in the Finance tab.',
+    infoNote: 'All 7 sources are India-section feeds only — no world/international articles bleed in. NDTV, Indian Express & HT for ground news, The Hindu National for politics & governance, The Hindu Sci-Tech for science & ISRO, YourStory for startups & innovation.',
   },
   Finance: {
     title: 'INDIAN FINANCIAL',
