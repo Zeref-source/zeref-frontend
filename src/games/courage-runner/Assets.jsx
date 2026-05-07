@@ -64,7 +64,7 @@ export function Lantern({ position }) {
       {/* Lantern box */}
       <mesh position={[0.28, 2.25, 0]}>
         <boxGeometry args={[0.28, 0.36, 0.28]} />
-        <meshLambertMaterial color="#ffaa00" emissive="#cc5500" />
+        <meshLambertMaterial color="#ffcc44" emissive="#ff7700" />
       </mesh>
     </group>
   )
@@ -124,10 +124,10 @@ export function OldBarn({ position }) {
         <boxGeometry args={[1.4, 2.4, 0.04]} />
         <meshLambertMaterial color="#1a0808" />
       </mesh>
-      {/* Window with faint glow */}
+      {/* Window with glow */}
       <mesh position={[-1.6, 3, 2.52]}>
         <boxGeometry args={[0.8, 0.8, 0.04]} />
-        <meshLambertMaterial color="#ffcc44" emissive="#aa6600" />
+        <meshLambertMaterial color="#ffdd55" emissive="#cc8800" />
       </mesh>
     </group>
   )
@@ -185,6 +185,29 @@ export function Windmill({ position }) {
           </mesh>
         ))}
       </group>
+    </group>
+  )
+}
+
+export function Pumpkin({ position, scale = 1 }) {
+  return (
+    <group position={position} scale={[scale, scale, scale]}>
+      <mesh position={[0, 0.4, 0]}>
+        <sphereGeometry args={[0.45, 8, 6]} />
+        <meshLambertMaterial color="#e05500" />
+      </mesh>
+      <mesh position={[0, 0.88, 0]}>
+        <cylinderGeometry args={[0.06, 0.09, 0.28, 4]} />
+        <meshLambertMaterial color="#1a4a08" />
+      </mesh>
+      <mesh position={[-0.16, 0.42, 0.38]}>
+        <boxGeometry args={[0.14, 0.1, 0.02]} />
+        <meshLambertMaterial color="#ff9900" emissive="#ff5500" />
+      </mesh>
+      <mesh position={[0.16, 0.42, 0.38]}>
+        <boxGeometry args={[0.14, 0.1, 0.02]} />
+        <meshLambertMaterial color="#ff9900" emissive="#ff5500" />
+      </mesh>
     </group>
   )
 }

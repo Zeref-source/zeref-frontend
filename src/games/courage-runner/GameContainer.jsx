@@ -33,14 +33,15 @@ export default function GameContainer() {
         <PerspectiveCamera makeDefault position={[0, 5.5, 11]} fov={58} />
         <CameraRig />
 
-        {/* Simple non-PBR lighting — no shadow maps needed */}
-        <ambientLight intensity={0.6} color="#6040a0" />
-        <directionalLight position={[-10, 20, 8]} intensity={1.5} color="#c8d8ff" />
-        <hemisphereLight args={['#1a0a3a', '#0a0418', 0.4]} />
+        {/* Boosted non-PBR lighting — Lambert materials only, no shadow maps */}
+        <ambientLight intensity={1.1} color="#8060c0" />
+        <directionalLight position={[-8, 18, 6]} intensity={2.5} color="#d0e4ff" />
+        <directionalLight position={[10, 12, 4]} intensity={1.0} color="#b070ff" />
+        <hemisphereLight args={['#2a1060', '#180830', 0.7]} />
 
-        {/* Cheap background colour instead of Stars component */}
+        {/* Fog pushed back so side scenery stays visible longer */}
         <color attach="background" args={['#060210']} />
-        <fog attach="fog" args={['#050308', 18, 70]} />
+        <fog attach="fog" args={['#050308', 30, 105]} />
 
         <Suspense fallback={null}>
           <World />

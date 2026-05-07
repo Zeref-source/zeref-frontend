@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGameStore } from './useGameStore'
-import { SpookyTree, Gravestone, Lantern, Scarecrow, OldBarn, Rock, BrokenWagon, Windmill, Fence } from './Assets'
+import { SpookyTree, Gravestone, Lantern, Scarecrow, OldBarn, Rock, BrokenWagon, Windmill, Fence, Pumpkin } from './Assets'
 import { playerRef } from './gameState'
 
 const LANES = [-4, 0, 4]
@@ -104,79 +104,135 @@ function FloorChunk({ variant }) {
         </mesh>
       ))}
 
-      {/* ── Left-side scenery ─────────────────────────── */}
+      {/* ── LEFT — variant 0 ──────────────────────────── */}
       {variant === 0 && <>
+        <Fence position={[-7.5, 0, -44]} length={5} />
+        <Fence position={[-7.5, 0, 18]} length={3} />
+        <Lantern position={[-8, 0, -38]} />
+        <Lantern position={[-8, 0, -8]} />
+        <Lantern position={[-8, 0, 24]} />
+        <Gravestone position={[-9, 0, -28]} rotation={[0, 0.3, 0]} />
+        <Gravestone position={[-9.5, 0, -18]} rotation={[0, -0.2, 0]} />
+        <Gravestone position={[-9, 0, 14]} rotation={[0, 0.4, 0]} />
+        <Gravestone position={[-10, 0, 38]} rotation={[0, -0.15, 0]} />
+        <Pumpkin position={[-9, 0, -32]} scale={1.2} />
+        <Pumpkin position={[-9.5, 0, 6]} scale={0.85} />
+        <Pumpkin position={[-10, 0, 30]} scale={1.0} />
+        <Rock position={[-10, 0, 22]} scale={1.2} />
+        <Rock position={[-9.5, 0, -14]} scale={0.7} />
         <SpookyTree position={[-14, 0, -30]} scale={1.2} />
-        <SpookyTree position={[-18, 0, 10]} />
-        <SpookyTree position={[-12, 0, 35]} scale={0.8} />
-        <Gravestone position={[-10, 0, -5]} rotation={[0, 0.3, 0]} />
-        <Gravestone position={[-11, 0, 2]} rotation={[0, -0.2, 0]} />
-        <Lantern position={[-8, 0, -20]} />
-        <Lantern position={[-8, 0, 15]} />
-        <Scarecrow position={[-22, 0, 20]} />
-        <Rock position={[-9, 0, 25]} scale={1.2} />
-        <Rock position={[-10, 0, 28]} scale={0.7} />
-        <Fence position={[-7.5, 0, -40]} length={4} />
+        <SpookyTree position={[-18, 0, 8]} />
+        <SpookyTree position={[-13, 0, 36]} scale={0.85} />
+        <SpookyTree position={[-20, 0, -10]} scale={1.1} />
+        <Scarecrow position={[-22, 0, 18]} />
       </>}
 
+      {/* ── LEFT — variant 1 ──────────────────────────── */}
       {variant === 1 && <>
+        <Fence position={[-7.5, 0, -44]} length={4} />
+        <Fence position={[-7.5, 0, 12]} length={4} />
         <OldBarn position={[-28, 0, 5]} />
-        <SpookyTree position={[-15, 0, -15]} scale={1.4} />
-        <SpookyTree position={[-20, 0, 30]} />
-        <Lantern position={[-8, 0, -5]} />
+        <Lantern position={[-8, 0, -32]} />
+        <Lantern position={[-8, 0, -4]} />
         <Lantern position={[-8, 0, 30]} />
-        <BrokenWagon position={[-11, 0, 15]} />
-        <Rock position={[-9, 0, -25]} />
-        <Gravestone position={[-10, 0, 20]} />
-        <Gravestone position={[-11.5, 0, 24]} rotation={[0, 0.5, 0]} />
-        <Gravestone position={[-9.5, 0, 28]} rotation={[0, -0.3, 0]} />
-        <Fence position={[-7.5, 0, 0]} length={3} />
+        <Gravestone position={[-9, 0, -15]} />
+        <Gravestone position={[-9.5, 0, 18]} rotation={[0, 0.5, 0]} />
+        <Gravestone position={[-10, 0, 24]} rotation={[0, -0.3, 0]} />
+        <Gravestone position={[-9, 0, 38]} rotation={[0, 0.2, 0]} />
+        <Pumpkin position={[-9.5, 0, -26]} scale={1.1} />
+        <Pumpkin position={[-10, 0, 10]} scale={0.9} />
+        <Pumpkin position={[-9, 0, 34]} scale={0.8} />
+        <BrokenWagon position={[-11, 0, 14]} />
+        <Rock position={[-9, 0, -28]} />
+        <Rock position={[-10.5, 0, -5]} scale={0.8} />
+        <SpookyTree position={[-15, 0, -18]} scale={1.4} />
+        <SpookyTree position={[-20, 0, 28]} />
+        <SpookyTree position={[-13, 0, -40]} scale={1.0} />
+        <Scarecrow position={[-14, 0, -2]} />
       </>}
 
+      {/* ── LEFT — variant 2 ──────────────────────────── */}
       {variant === 2 && <>
-        <Windmill position={[-30, 0, -10]} />
-        <SpookyTree position={[-14, 0, 20]} />
-        <SpookyTree position={[-19, 0, -25]} scale={1.1} />
-        <Scarecrow position={[-13, 0, -5]} />
-        <Lantern position={[-8, 0, 10]} />
-        <Rock position={[-10, 0, -10]} scale={1.5} />
-        <Rock position={[-12, 0, -6]} scale={0.8} />
-        <Gravestone position={[-10, 0, 35]} />
-        <Fence position={[-7.5, 0, 10]} length={5} />
+        <Fence position={[-7.5, 0, 8]} length={6} />
+        <Windmill position={[-30, 0, -12]} />
+        <Lantern position={[-8, 0, -30]} />
+        <Lantern position={[-8, 0, 6]} />
+        <Lantern position={[-8, 0, 38]} />
+        <Gravestone position={[-9, 0, -22]} />
+        <Gravestone position={[-9.5, 0, -8]} rotation={[0, 0.3, 0]} />
+        <Gravestone position={[-9, 0, 34]} rotation={[0, -0.2, 0]} />
+        <Pumpkin position={[-9.5, 0, -16]} scale={1.3} />
+        <Pumpkin position={[-9, 0, 20]} scale={1.0} />
+        <Pumpkin position={[-10, 0, 42]} scale={0.8} />
+        <Rock position={[-9.5, 0, -12]} scale={1.5} />
+        <Rock position={[-10, 0, -6]} scale={0.8} />
+        <Rock position={[-9, 0, 28]} scale={1.0} />
+        <Scarecrow position={[-13, 0, -7]} />
+        <SpookyTree position={[-14, 0, 18]} />
+        <SpookyTree position={[-19, 0, -26]} scale={1.1} />
+        <SpookyTree position={[-15, 0, 40]} scale={0.9} />
       </>}
 
-      {/* ── Right-side scenery ────────────────────────── */}
+      {/* ── RIGHT — variant 0 ─────────────────────────── */}
       {variant === 0 && <>
-        <SpookyTree position={[16, 0, 0]} scale={1.1} />
-        <SpookyTree position={[20, 0, -25]} />
+        <Fence position={[7.5, 0, -35]} length={5} />
         <OldBarn position={[26, 0, 15]} />
-        <Lantern position={[9, 0, -10]} />
-        <Lantern position={[9, 0, 30]} />
-        <Rock position={[10, 0, 10]} />
-        <Gravestone position={[10, 0, -20]} />
-        <Fence position={[7.5, 0, -35]} length={4} />
+        <Lantern position={[9, 0, -20]} />
+        <Lantern position={[9, 0, 10]} />
+        <Lantern position={[9, 0, 36]} />
+        <Gravestone position={[10, 0, -30]} rotation={[0, -0.3, 0]} />
+        <Gravestone position={[10.5, 0, -5]} rotation={[0, 0.2, 0]} />
+        <Gravestone position={[9.5, 0, 28]} rotation={[0, -0.1, 0]} />
+        <Pumpkin position={[9.5, 0, -14]} scale={1.1} />
+        <Pumpkin position={[10, 0, 22]} scale={0.9} />
+        <Pumpkin position={[9, 0, 40]} scale={0.75} />
+        <Rock position={[10, 0, 8]} />
+        <Rock position={[9.5, 0, -22]} scale={0.8} />
+        <SpookyTree position={[16, 0, 0]} scale={1.1} />
+        <SpookyTree position={[20, 0, -28]} />
+        <SpookyTree position={[14, 0, 32]} scale={0.9} />
+        <Scarecrow position={[18, 0, -12]} />
       </>}
 
+      {/* ── RIGHT — variant 1 ─────────────────────────── */}
       {variant === 1 && <>
-        <SpookyTree position={[15, 0, 10]} />
-        <SpookyTree position={[22, 0, -20]} scale={1.3} />
-        <Scarecrow position={[14, 0, 25]} />
+        <Fence position={[7.5, 0, 5]} length={4} />
+        <Lantern position={[9, 0, -32]} />
         <Lantern position={[9, 0, 0]} />
-        <Lantern position={[9, 0, -30]} />
-        <BrokenWagon position={[12, 0, -10]} />
-        <Rock position={[11, 0, 20]} scale={1.1} />
-        <Fence position={[7.5, 0, 5]} length={3} />
+        <Lantern position={[9, 0, 28]} />
+        <Gravestone position={[10, 0, -20]} rotation={[0, 0.3, 0]} />
+        <Gravestone position={[10.5, 0, 15]} rotation={[0, -0.4, 0]} />
+        <Gravestone position={[9.5, 0, 38]} rotation={[0, 0.2, 0]} />
+        <Pumpkin position={[10, 0, -26]} scale={1.2} />
+        <Pumpkin position={[9.5, 0, 8]} scale={1.0} />
+        <Pumpkin position={[10.5, 0, 34]} scale={0.85} />
+        <BrokenWagon position={[12, 0, -12]} />
+        <Rock position={[10.5, 0, 22]} scale={1.1} />
+        <Rock position={[9.5, 0, -6]} scale={0.75} />
+        <SpookyTree position={[15, 0, 10]} />
+        <SpookyTree position={[22, 0, -22]} scale={1.3} />
+        <SpookyTree position={[16, 0, 36]} scale={0.9} />
+        <Scarecrow position={[14, 0, 24]} />
       </>}
 
+      {/* ── RIGHT — variant 2 ─────────────────────────── */}
       {variant === 2 && <>
-        <SpookyTree position={[17, 0, -10]} scale={0.9} />
-        <SpookyTree position={[14, 0, 30]} />
+        <Fence position={[7.5, 0, -22]} length={5} />
         <OldBarn position={[30, 0, -20]} />
-        <Lantern position={[9, 0, 15]} />
-        <Gravestone position={[11, 0, 5]} />
-        <Gravestone position={[12, 0, 10]} rotation={[0, 0.4, 0]} />
-        <Rock position={[10, 0, -15]} scale={1.3} />
-        <Fence position={[7.5, 0, -20]} length={5} />
+        <Lantern position={[9, 0, -36]} />
+        <Lantern position={[9, 0, -8]} />
+        <Lantern position={[9, 0, 14]} />
+        <Gravestone position={[10, 0, -28]} rotation={[0, 0.2, 0]} />
+        <Gravestone position={[10.5, 0, 6]} rotation={[0, -0.3, 0]} />
+        <Gravestone position={[9.5, 0, 30]} rotation={[0, 0.15, 0]} />
+        <Pumpkin position={[10, 0, -18]} scale={1.1} />
+        <Pumpkin position={[9.5, 0, 20]} scale={0.9} />
+        <Rock position={[10, 0, -14]} scale={1.3} />
+        <Rock position={[9.5, 0, 36]} scale={0.85} />
+        <SpookyTree position={[17, 0, -12]} scale={0.9} />
+        <SpookyTree position={[14, 0, 28]} />
+        <SpookyTree position={[21, 0, 2]} scale={1.1} />
+        <Scarecrow position={[16, 0, -5]} />
       </>}
     </>
   )
