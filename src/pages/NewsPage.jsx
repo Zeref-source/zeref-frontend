@@ -166,6 +166,7 @@ export default function NewsPage({ category = 'Gaming' }) {
   const [search, setSearch] = useState('')
   const [lastUpdated, setLastUpdated] = useState(null)
   const [refreshing, setRefreshing] = useState(false)
+  const [justRefreshed, setJustRefreshed] = useState(false)
   const [subCategory, setSubCategory] = useState('IGC_Domestic')
 
   const fetchNews = async (force = false) => {
@@ -176,12 +177,15 @@ export default function NewsPage({ category = 'Gaming' }) {
       const res = await fetch(`${API_BASE}/news?limit=1000${force ? '&force=true' : ''}`)
       if (!res.ok) throw new Error('Backend error')
       const data = await res.json()
-      // Only keep articles from this category's sources
       const categoryArticles = (data.articles || []).filter(a =>
         a.category === category
       )
       setArticles(categoryArticles)
       setLastUpdated(new Date())
+      if (force) {
+        setJustRefreshed(true)
+        setTimeout(() => setJustRefreshed(false), 2500)
+      }
     } catch (e) {
       setError('Could not load news. Make sure the backend is running.')
     } finally {
@@ -227,6 +231,9 @@ export default function NewsPage({ category = 'Gaming' }) {
   return (
     <main className="news-page">
 
+      {/* Sliding progress bar — only visible during refresh */}
+      {refreshing && <div className="news-refresh-bar" />}
+
       {/* ── Page Header ── */}
       <div className="news-header">
         <div className="news-header-left">
@@ -239,7 +246,11 @@ export default function NewsPage({ category = 'Gaming' }) {
           </h1>
           <p className="news-page-sub">
             {cfg.subtitle} · {articles.length} articles ·{' '}
-            {lastUpdated ? `Updated ${timeAgo(lastUpdated.toISOString())}` : 'Loading...'}
+            {refreshing
+              ? <span className="news-status-refreshing">⟳ Fetching latest...</span>
+              : justRefreshed
+                ? <span className="news-status-done">✓ Updated just now</span>
+                : lastUpdated ? `Updated ${timeAgo(lastUpdated.toISOString())}` : 'Loading...'}
           </p>
         </div>
         <button
