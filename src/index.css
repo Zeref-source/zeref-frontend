@@ -1148,6 +1148,8 @@ body {
 }
 .mobile-content {
   /* On desktop, no offset needed — side nav is hidden */
+  width: 100%;
+  align-self: stretch;
 }
 
 @media (max-width: 1024px) {
@@ -1192,6 +1194,16 @@ body {
   /* ---- Content area shifts right to clear sidebar ---- */
   .mobile-content {
     margin-left: 68px;
+    width: calc(100% - 68px);
+  }
+
+  /* ---- Gaming page goes truly fullscreen on mobile ---- */
+  .game-wrap {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    z-index: 200 !important;
   }
 
   /* ---- Left vertical sidebar ---- */
