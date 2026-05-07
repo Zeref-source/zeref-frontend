@@ -3,7 +3,7 @@ import { useGameStore } from '../useGameStore'
 import Leaderboard from './Leaderboard'
 
 export default function Overlay() {
-  const { status, score, health, isMuted, startGame, reset, toggleMute } = useGameStore()
+  const { status, score, coins, distance, health, isMuted, startGame, reset, toggleMute } = useGameStore()
 
   return (
     <div style={{
@@ -15,31 +15,52 @@ export default function Overlay() {
       fontFamily: "'Outfit', sans-serif",
       color: 'white'
     }}>
-      
-      {/* Audio Toggle */}
-      <button 
+
+      {/* Mute toggle */}
+      <button
         onClick={toggleMute}
         style={{
-          position: 'absolute', top: '20px', left: '20px', background: 'rgba(0,0,0,0.5)', border: '1px solid #ff6b2b',
-          borderRadius: '50%', width: '44px', height: '44px', cursor: 'pointer', pointerEvents: 'auto',
+          position: 'absolute', top: '20px', left: '20px',
+          background: 'rgba(0,0,0,0.5)', border: '1px solid #ff6b2b',
+          borderRadius: '50%', width: '44px', height: '44px',
+          cursor: 'pointer', pointerEvents: 'auto',
           fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}
-        title={isMuted ? "Unmute" : "Mute"}
+        title={isMuted ? 'Unmute' : 'Mute'}
       >
         {isMuted ? '🔇' : '🔊'}
       </button>
 
+      {/* Controls hint (bottom left during play) */}
+      {status === 'PLAYING' && (
+        <div style={{
+          position: 'absolute', bottom: '20px', left: '20px',
+          background: 'rgba(0,0,0,0.45)', borderRadius: '10px',
+          padding: '8px 14px', fontSize: '12px', color: '#94a3b8', lineHeight: 1.7
+        }}>
+          ← → lane &nbsp;|&nbsp; ↑ / Space jump &nbsp;|&nbsp; ↓ slide
+        </div>
+      )}
+
       {/* HUD */}
       {status === 'PLAYING' && (
-        <div style={{ padding: '20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
-          <div style={{ background: 'rgba(0,0,0,0.5)', padding: '10px 20px', borderRadius: '12px', border: '1px solid #ff6b2b' }}>
-            <div style={{ fontSize: '12px', color: '#ff6b2b', fontWeight: 800 }}>SCORE</div>
-            <div style={{ fontSize: '24px', fontWeight: 900 }}>{Math.floor(score)}</div>
+        <div style={{ padding: '20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start', gap: '12px' }}>
+          {/* Distance */}
+          <div style={{ background: 'rgba(0,0,0,0.55)', padding: '10px 20px', borderRadius: '12px', border: '1px solid #ff6b2b', minWidth: '90px', textAlign: 'center' }}>
+            <div style={{ fontSize: '11px', color: '#ff6b2b', fontWeight: 800, letterSpacing: 1 }}>DIST</div>
+            <div style={{ fontSize: '22px', fontWeight: 900 }}>{Math.floor(distance)}m</div>
           </div>
-          
-          <div style={{ display: 'flex', gap: '8px', marginLeft: '20px' }}>
+
+          {/* Coins */}
+          <div style={{ background: 'rgba(0,0,0,0.55)', padding: '10px 16px', borderRadius: '12px', border: '1px solid #ffd700', minWidth: '80px', textAlign: 'center' }}>
+            <div style={{ fontSize: '11px', color: '#ffd700', fontWeight: 800, letterSpacing: 1 }}>COINS</div>
+            <div style={{ fontSize: '22px', fontWeight: 900 }}>🪙 {coins}</div>
+          </div>
+
+          {/* Hearts */}
+          <div style={{ display: 'flex', gap: '6px', alignSelf: 'center' }}>
             {Array.from({ length: 3 }).map((_, i) => (
-              <span key={i} style={{ fontSize: '24px', filter: i >= health ? 'grayscale(1) opacity(0.3)' : 'none' }}>
+              <span key={i} style={{ fontSize: '26px', filter: i >= health ? 'grayscale(1) opacity(0.3)' : 'none', transition: 'filter 0.3s' }}>
                 💖
               </span>
             ))}
@@ -49,30 +70,33 @@ export default function Overlay() {
 
       {/* Start Screen */}
       {status === 'START' && (
-        <div style={{ 
+        <div style={{
           flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          background: 'rgba(0,0,0,0.7)', pointerEvents: 'auto', textAlign: 'center'
+          background: 'rgba(0,0,0,0.75)', pointerEvents: 'auto', textAlign: 'center', padding: '20px'
         }}>
-          <h1 style={{ fontSize: '64px', fontWeight: 900, marginBottom: '0', color: '#ff6b2b', textShadow: '0 0 20px rgba(255,107,43,0.5)' }}>
+          <h1 style={{ fontSize: '64px', fontWeight: 900, margin: '0', color: '#ff6b2b', textShadow: '0 0 24px rgba(255,107,43,0.6)' }}>
             COURAGE
           </h1>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, marginTop: '0', color: '#94a3b8' }}>THE COWARDLY RUNNER</h2>
-          
-          <div style={{ margin: '20px 0', fontSize: '16px', color: '#94a3b8' }}>
-            Avoid obstacles · Survive the farm · Don't get caught by Eustace
+          <h2 style={{ fontSize: '22px', fontWeight: 600, marginTop: '6px', color: '#94a3b8' }}>THE COWARDLY RUNNER</h2>
+
+          <div style={{ margin: '18px 0', fontSize: '15px', color: '#94a3b8', lineHeight: 1.8 }}>
+            🐾 ← → switch lanes &nbsp;|&nbsp; ↑ / Space jump over barriers<br />
+            ↓ slide under gates &nbsp;|&nbsp; collect 🪙 coins<br />
+            Don't let Eustace catch you!
           </div>
 
-          <button 
+          <button
             onClick={startGame}
             style={{
-              padding: '16px 48px', fontSize: '20px', fontWeight: 800, background: '#ff6b2b', border: 'none',
-              borderRadius: '99px', cursor: 'pointer', color: '#050a0e', transition: 'transform 0.2s',
-              marginBottom: '20px'
+              padding: '16px 52px', fontSize: '20px', fontWeight: 800,
+              background: '#ff6b2b', border: 'none', borderRadius: '99px',
+              cursor: 'pointer', color: '#050a0e', transition: 'transform 0.2s',
+              marginBottom: '24px'
             }}
-            onMouseEnter={e => e.target.style.transform = 'scale(1.05)'}
-            onMouseLeave={e => e.target.style.transform = 'scale(1)'}
+            onMouseEnter={e => (e.target.style.transform = 'scale(1.06)')}
+            onMouseLeave={e => (e.target.style.transform = 'scale(1)')}
           >
-            LETS GO!
+            LETS GO! 🐕
           </button>
 
           <Leaderboard />
@@ -81,32 +105,43 @@ export default function Overlay() {
 
       {/* Game Over Screen */}
       {status === 'GAME_OVER' && (
-        <div style={{ 
+        <div style={{
           flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          background: 'rgba(0,0,0,0.85)', pointerEvents: 'auto', textAlign: 'center', overflowY: 'auto', padding: '40px 0'
+          background: 'rgba(0,0,0,0.88)', pointerEvents: 'auto', textAlign: 'center',
+          overflowY: 'auto', padding: '40px 20px'
         }}>
-          <h1 style={{ fontSize: '48px', fontWeight: 900, color: '#ff4d6d' }}>STUPID DOG!</h1>
-          <div style={{ fontSize: '18px', color: '#94a3b8', marginBottom: '20px' }}>You made Eustace look bad.</div>
-          
-          <div style={{ background: '#121d28', padding: '30px', borderRadius: '24px', border: '2px solid #ff6b2b', marginBottom: '30px' }}>
-            <div style={{ fontSize: '14px', color: '#ff6b2b', fontWeight: 800 }}>FINAL SCORE</div>
-            <div style={{ fontSize: '48px', fontWeight: 900 }}>{Math.floor(score)}</div>
+          <h1 style={{ fontSize: '48px', fontWeight: 900, color: '#ff4d6d', margin: '0 0 4px' }}>STUPID DOG!</h1>
+          <div style={{ fontSize: '16px', color: '#94a3b8', marginBottom: '24px' }}>You made Eustace look bad.</div>
+
+          <div style={{ background: '#121d28', padding: '28px 40px', borderRadius: '24px', border: '2px solid #ff6b2b', marginBottom: '24px' }}>
+            <div style={{ display: 'flex', gap: '32px', justifyContent: 'center' }}>
+              <div>
+                <div style={{ fontSize: '12px', color: '#ff6b2b', fontWeight: 800, letterSpacing: 1 }}>DISTANCE</div>
+                <div style={{ fontSize: '40px', fontWeight: 900 }}>{Math.floor(distance)}m</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '12px', color: '#ffd700', fontWeight: 800, letterSpacing: 1 }}>COINS</div>
+                <div style={{ fontSize: '40px', fontWeight: 900 }}>🪙 {coins}</div>
+              </div>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
-            <button 
+          <div style={{ display: 'flex', gap: '14px', marginBottom: '24px' }}>
+            <button
               onClick={startGame}
               style={{
-                padding: '12px 32px', fontSize: '16px', fontWeight: 800, background: '#ff6b2b', border: 'none',
-                borderRadius: '99px', cursor: 'pointer', color: '#050a0e'
+                padding: '12px 32px', fontSize: '16px', fontWeight: 800,
+                background: '#ff6b2b', border: 'none', borderRadius: '99px',
+                cursor: 'pointer', color: '#050a0e'
               }}
             >
               TRY AGAIN
             </button>
-            <button 
+            <button
               onClick={reset}
               style={{
-                padding: '12px 32px', fontSize: '16px', fontWeight: 800, background: 'transparent', border: '2px solid #ff6b2b',
+                padding: '12px 32px', fontSize: '16px', fontWeight: 800,
+                background: 'transparent', border: '2px solid #ff6b2b',
                 borderRadius: '99px', cursor: 'pointer', color: '#ff6b2b'
               }}
             >
@@ -117,8 +152,6 @@ export default function Overlay() {
           <Leaderboard />
         </div>
       )}
-
     </div>
   )
 }
-
