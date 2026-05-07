@@ -8,7 +8,7 @@ const SOURCE_MAP = {
            'Rock Paper Shotgun', 'VGC', 'GamesIndustry.biz', 'Ars Technica', 'Game Developer'],
   Anime: ['Anime News Network', 'Crunchyroll'],
   Hardware: ["Tom's Hardware", 'The Verge', 'Wccftech', 'Digital Trends', 'AnandTech'],
-  Geopolitics: ['BBC World', 'Al Jazeera', 'France 24', 'DW World', 'Foreign Policy', 'The Guardian', 'The Hindu'],
+  Geopolitics: ['BBC World', 'Al Jazeera', 'DW World', 'Foreign Policy', 'The Guardian World', 'The Hindu', 'Middle East Eye', 'OCCRP'],
   India: ['NDTV India', 'The Hindu National', 'Indian Express', 'India Today', 'The Hindu Sci-Tech', 'Scroll.in', 'YourStory'],
   Movies: ['IGN Movies', 'Variety', 'The Hollywood Reporter', 'Deadline', 'Collider', 'Screen Rant'],
   Finance: ['Moneycontrol', 'Economic Times', 'LiveMint', 'Business Line', 'NDTV Profit'],
@@ -45,11 +45,11 @@ const CONFIG = {
   Geopolitics: {
     title: 'Geopolitics',
     titleHighlight: 'Intel',
-    subtitle: '7 global sources across 5 regions — wire services, field reporters & analysts',
+    subtitle: '8 sources across 5 regions — editorially independent press, investigative accountability journalism & regional reporters',
     emoji: '🌍',
-    placeholder: 'Search conflicts, leaders, treaties, sanctions...',
+    placeholder: 'Search conflicts, leaders, treaties, coups, sanctions...',
     fallbackEmoji: '🌍',
-    infoNote: 'Ground-reality filter: wire services + regional press from Western, Middle Eastern, European & South Asian perspectives. No state-run propaganda outlets.',
+    infoNote: 'Multi-perspective filter: sources span Western, Middle Eastern, European, South Asian & Global South angles — cross-referencing cancels single-source bias. OCCRP for corruption investigations. RT, Sputnik, CGTN excluded.',
   },
   India: {
     title: 'INDIA',
