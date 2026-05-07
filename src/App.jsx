@@ -48,20 +48,25 @@ export default function App() {
       <div className="bg-mesh" />
 
       <header className="header">
-        <span
-          className="header-logo"
-          style={{ cursor: 'pointer' }}
+        {/* ── Left: glowing logo orb ── */}
+        <div
+          className="header-logo-orb"
           onClick={() => navigate('home')}
           title="Back to Home"
+          role="button"
+          tabIndex={0}
+          onKeyDown={e => e.key === 'Enter' && navigate('home')}
         >
-          <img
-            src="/logo.png"
-            alt="RealityDive Logo"
-            style={{ width: 64, height: 64, objectFit: 'contain', borderRadius: 8, filter: 'drop-shadow(0 0 8px rgba(255,107,43,0.6))' }}
-          />
-          <span className="header-title">RealityDive</span>
-        </span>
+          <img src="/logo.png" alt="RealityDive Logo" className="header-orb-img" />
+        </div>
 
+        {/* ── Center: brand + tagline ── */}
+        <div className="header-brand" onClick={() => navigate('home')} style={{ cursor: 'pointer' }}>
+          <span className="header-title">RealityDive</span>
+          <span className="header-tagline">A Gamer's Retreat&nbsp;·&nbsp;Raw, Unfiltered</span>
+        </div>
+
+        {/* ── Desktop nav ── */}
         <nav className="header-nav">
           {TABS.map(tab => (
             <button
@@ -74,7 +79,10 @@ export default function App() {
           ))}
         </nav>
 
-        <span className="header-sub">A Gamer's Retreat</span>
+        {/* ── Right: small logo badge ── */}
+        <div className="header-logo-badge">
+          <img src="/logo.png" alt="" className="header-badge-img" />
+        </div>
       </header>
 
       <nav className="mobile-side-nav">
