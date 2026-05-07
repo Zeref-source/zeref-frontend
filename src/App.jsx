@@ -4,7 +4,7 @@ import NewsPage from './pages/NewsPage'
 import HomePage from './pages/HomePage'
 import GamingPage from './pages/GamingPage/GamingPage'
 
-// ── SINGLE SOURCE OF TRUTH ─────────────────────────────────────────────────
+// ── News tabs — purely reading content ────────────────────────────────────
 const TABS = [
   { id: 'gaming-news',      label: 'Gaming News',      shortLabel: 'Gaming',   icon: '🎮', category: 'Gaming'      },
   { id: 'anime-news',       label: 'Anime News',        shortLabel: 'Anime',    icon: '🌸', category: 'Anime'       },
@@ -16,30 +16,38 @@ const TABS = [
 ]
 
 export default function App() {
-  // 'home' shows the landing page; any tab id shows the reader/game
   const [page, setPage] = useState('home')
   const navigate = (p) => setPage(p)
 
-  // ── Landing page — full screen, no chrome ──────────────────────────────
+  // ── Landing page ───────────────────────────────────────────────────────
   if (page === 'home') {
     return (
       <>
         <div className="bg-mesh" />
         <HomePage
-          onEnterGaming={() => navigate('gaming-news')}
+          onEnterGaming={() => navigate('arcade')}
           onEnterChill={() => navigate('anime-news')}
         />
       </>
     )
   }
 
-  // ── Reader / Gaming mode ───────────────────────────────────────────────
+  // ── Arcade (game) — fullscreen, no header or news tabs ─────────────────
+  if (page === 'arcade') {
+    return (
+      <>
+        <div className="bg-mesh" />
+        <GamingPage onBack={() => navigate('home')} />
+      </>
+    )
+  }
+
+  // ── News reader — all 7 tabs, pure reading content ─────────────────────
   return (
     <div className="app-container">
       <div className="bg-mesh" />
 
       <header className="header">
-        {/* Logo → back to home */}
         <span
           className="header-logo"
           style={{ cursor: 'pointer' }}
@@ -54,7 +62,6 @@ export default function App() {
           <span className="header-title">RealityDive</span>
         </span>
 
-        {/* Desktop nav — auto-generated */}
         <nav className="header-nav">
           {TABS.map(tab => (
             <button
@@ -70,9 +77,7 @@ export default function App() {
         <span className="header-sub">A Gamer's Retreat</span>
       </header>
 
-      {/* Mobile left sidebar nav */}
       <nav className="mobile-side-nav">
-        {/* Home button at top */}
         <button
           className="mobile-nav-btn"
           onClick={() => navigate('home')}
@@ -96,13 +101,8 @@ export default function App() {
         ))}
       </nav>
 
-      {/* Main content area */}
       <div className="mobile-content">
-        {/* Gaming Game Loop */}
-        {page === 'gaming-news' && <GamingPage />}
-        
-        {/* News Reader Tabs (All except Gaming) */}
-        {TABS.filter(t => t.id !== 'gaming-news').map(tab => (
+        {TABS.map(tab => (
           page === tab.id && <NewsPage key={tab.id} category={tab.category} />
         ))}
       </div>

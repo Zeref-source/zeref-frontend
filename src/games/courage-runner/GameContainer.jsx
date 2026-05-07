@@ -39,7 +39,7 @@ function Moon() {
   )
 }
 
-export default function GameContainer() {
+export default function GameContainer({ onBack }) {
   return (
     <div style={{ width: '100%', height: '100%', background: '#050308' }}>
       <AudioController />
@@ -67,7 +67,7 @@ export default function GameContainer() {
 
       </Canvas>
 
-      <UI />
+      <UI onBack={onBack} />
     </div>
   )
 }

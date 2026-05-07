@@ -2,7 +2,7 @@ import React from 'react'
 import { useGameStore } from '../useGameStore'
 import Leaderboard from './Leaderboard'
 
-export default function Overlay() {
+export default function Overlay({ onBack }) {
   const { status, score, coins, distance, health, isMuted, startGame, reset, toggleMute } = useGameStore()
 
   return (
@@ -30,6 +30,24 @@ export default function Overlay() {
       >
         {isMuted ? '🔇' : '🔊'}
       </button>
+
+      {/* Exit to home — only when not mid-run */}
+      {onBack && status !== 'PLAYING' && (
+        <button
+          onClick={onBack}
+          style={{
+            position: 'absolute', top: '20px', right: '20px',
+            background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.25)',
+            borderRadius: '99px', padding: '0 16px', height: '44px',
+            cursor: 'pointer', pointerEvents: 'auto',
+            fontSize: '13px', fontWeight: 700, color: '#94a3b8',
+            display: 'flex', alignItems: 'center', gap: '6px'
+          }}
+          title="Back to site"
+        >
+          ← Exit
+        </button>
+      )}
 
       {/* Controls hint (bottom left during play) */}
       {status === 'PLAYING' && (

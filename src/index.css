@@ -733,10 +733,9 @@ body {
   box-shadow: 0 2px 12px rgba(255,107,43,0.4);
 }
 
-/* ============ Page: Gaming News ============ */
+/* ============ Page: News ============ */
 .news-page {
   width: 100%;
-  max-width: 1400px;
   padding: var(--sp-xl);
   display: flex;
   flex-direction: column;
@@ -1146,6 +1145,15 @@ body {
 .mobile-side-nav {
   display: none;
 }
+/* Game is always fullscreen — covers header + any nav tabs */
+.game-wrap {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 200;
+}
+
 .mobile-content {
   /* On desktop, no offset needed — side nav is hidden */
   width: 100%;
@@ -1195,15 +1203,6 @@ body {
   .mobile-content {
     margin-left: 68px;
     width: calc(100% - 68px);
-  }
-
-  /* ---- Gaming page goes truly fullscreen on mobile ---- */
-  .game-wrap {
-    position: fixed !important;
-    inset: 0 !important;
-    width: 100vw !important;
-    height: 100dvh !important;
-    z-index: 200 !important;
   }
 
   /* ---- Left vertical sidebar ---- */

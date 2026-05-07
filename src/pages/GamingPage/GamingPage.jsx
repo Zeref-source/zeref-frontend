@@ -1,18 +1,10 @@
 import React from 'react'
 import GameContainer from '../../games/courage-runner/GameContainer'
 
-export default function GamingPage() {
+export default function GamingPage({ onBack }) {
   return (
-    <div
-      className="game-wrap"
-      style={{
-        width: '100%',
-        height: 'calc(100dvh - 96px)',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      <GameContainer />
+    <div className="game-wrap">
+      <GameContainer onBack={onBack} />
     </div>
   )
 }
